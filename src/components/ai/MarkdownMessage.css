@@ -1,0 +1,130 @@
+.code-block-wrapper {
+  position: relative;
+  margin: 1em 0;
+  background-color: #282c34;
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: "Fira Code", "Courier New", monospace;
+}
+
+.code-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5em 1em;
+  background-color: #1e2127;
+  color: #ddd;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #333;
+}
+
+.language-label {
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.copy-btn:hover {
+  color: #fff;
+}
+
+pre code {
+  display: block;
+  padding: 1em;
+  max-width: 100%;
+  overflow-x: auto;
+  color: #f8f8f2;
+}
+
+/* Gold for bold text and headers */
+.code-block-wrapper strong,
+.code-block-wrapper h1,
+.code-block-wrapper h2,
+.code-block-wrapper h3,
+.code-block-wrapper h4,
+.code-block-wrapper h5,
+.code-block-wrapper h6 {
+  color: #ffd700;
+}
+
+/* Optional: If you're using inline code outside code blocks */
+.code-block-wrapper code:not(pre code) {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #ffd700;
+  font-family: "Fira Code", monospace;
+}
+
+/* Make body text white */
+.code-block-wrapper p {
+  color: #ffffff;
+  margin: 0.5em 0;
+}
+
+/* General override for highlight.js pink-to-gold in code */
+.hljs-attr,
+.hljs-variable,
+.hljs-title,
+.hljs-name {
+  color: #ffd700 !important;
+}
+
+/* Optional: tone down comment green, strings, etc. if needed */
+.hljs-comment {
+  color: #6a9955; /* VSCode-style green comments */
+}
+
+.hljs-string {
+  color: #ce9178; /* orangish string color */
+}
+
+/* Override highlight.js pink classes with gold */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link,
+.hljs-name,
+.hljs-title,
+.hljs-attr,
+.hljs-variable,
+.hljs-attribute {
+  color: #ffd700 !important; /* GOLD */
+}
+
+/* Strings still orange (optional) */
+.hljs-string {
+  color: #ce9178 !important;
+}
+
+/* Comments green */
+.hljs-comment {
+  color: #6a9955 !important;
+}
+
+/* Function params */
+.hljs-params {
+  color: #9cdcfe !important;
+}
+
+/* Background: dark, consistent, editor-like */
+pre code.hljs {
+  background: #1e1e1e !important;
+  color: #ffffff;
+  padding: 1em;
+  border-radius: 8px;
+  font-family: "Fira Code", monospace;
+  font-size: 0.95rem;
+}
+

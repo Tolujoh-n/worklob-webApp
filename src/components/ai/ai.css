@@ -1,0 +1,219 @@
+.aiagent .card {
+  background-color: #213743;
+  color: white;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aiagent .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.aiagent .card-image {
+  width: 100%;
+  object-fit: cover;
+  height: 200px;
+}
+
+.aiagent .card-title {
+  margin-bottom: 0.2rem;
+  color: whitesmoke;
+  padding: 0.75rem;
+}
+
+.aiagent .card-description {
+  font-size: 1rem;
+  padding: 0.75rem;
+  color: #ccc;
+}
+
+.aiagent .card-checkk {
+  font-size: 0.9rem;
+  padding: 0.75rem;
+}
+
+.aiagent .card-price {
+  font-weight: bold;
+}
+
+.aiagent .card-author {
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.aiagent .aibut {
+  background-color: #0f212e;
+  border-radius: 10px;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.aiagent .aibut:hover {
+  background-color: #5c7e90;
+  color: white;
+  transform: scale(1.02);
+}
+
+.aiagent .lobcoin-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 2px;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
+.ai-instruction {
+  border-radius: 5px;
+  border: 1px solid gray;
+  padding: 10px;
+  background-color: #0f212e;
+  margin-bottom: 10px;
+}
+
+#ai-inputbox {
+  height: 10rem;
+  display: block;
+  margin-bottom: 1rem;
+  background-color: #f0eaea;
+}
+
+.ai-walletbtn {
+  background-color: #5c7e90;
+  border-radius: 10px;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2;
+  margin-bottom: 10px;
+}
+
+.ai-walletbtn:hover {
+  background-color: #6ca6c6;
+  color: white;
+}
+
+.airesponse-walletbtn {
+  background-color: #5c7e90;
+  width: 100%;
+  border-radius: 10px;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2;
+  margin-bottom: 10px;
+  margin-top: 15px;
+}
+
+.airesponse-walletbtn:hover {
+  background-color: #6ca6c6;
+  color: white;
+}
+
+.lobcoin-detailsicon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 2px;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
+#moreagenttext {
+  color: goldenrod;
+  font-size: 1.2rem;
+  text-align: center;
+  font-style: italic;
+}
+
+#aicopyicon {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  cursor: pointer;
+  background: #48a8db;
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+#aicopyicon:hover {
+  background: #6ca6c6;
+}
+#ai-outpara {
+  text-align: center;
+  padding-top: 15rem;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+/* loading animation */
+/* Smooth grow-shrink animation for the "Generating" text */
+.generating-text {
+  font-weight: bold;
+  font-size: 24px;
+  text-align: center;
+  padding-top: 15rem;
+  animation: pulseText 2s infinite ease-in-out;
+  /* display: inline-flex; */
+  align-items: center;
+}
+
+/* Each dot animates in a loop with slight delay */
+.generating-text .dots span {
+  font-weight: bold;
+  font-size: 24px;
+  opacity: 0.3;
+  animation: dotBlink 1.2s infinite;
+  margin-left: 2px;
+}
+
+/* Delay each dot for sequencing */
+.generating-text .dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+.generating-text .dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.generating-text .dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Keyframes for growing text */
+@keyframes pulseText {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  33% {
+    transform: scale(1.15);
+  }
+  66% {
+    transform: scale(1.3);
+  }
+}
+
+/* Keyframes for bouncing/fading dots */
+@keyframes dotBlink {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+.userai {
+  background: #3b6175 !important;
+}
