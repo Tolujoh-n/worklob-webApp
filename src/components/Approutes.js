@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useWeb3 } from "../Web3Provider.js";
 import { Toaster, toast } from "sonner";
+import Walletmodal from "./Walletmodal.jsx";
 
 import Home from "../views/Home";
 import Navbar from "../components/Navbar";
@@ -63,6 +64,10 @@ const Approutes = () => {
   const [activeLink, setActiveLink] = useState("");
   const { connectWallet, connected } = useWeb3();
   const [sender, setSender] = useState("");
+  const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
+
+  const openWalletmodal = () => setIsWalletmodalOpen(true);
+  const closeWalletmodal = () => setIsWalletmodalOpen(false);
 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
@@ -78,25 +83,25 @@ const Approutes = () => {
     setSidebarOpen(false); // Explicitly sets the state to false
   };
 
-  useEffect(() => {
-    const getAccount = async () => {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
-          setSender(accounts[0]);
-        } catch (error) {
-          console.error("Error fetching account:", error);
-          toast.error("Failed to fetch wallet address");
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const getAccount = async () => {
+  //     if (window.ethereum) {
+  //       try {
+  //         const accounts = await window.ethereum.request({
+  //           method: "eth_requestAccounts",
+  //         });
+  //         setSender(accounts[0]);
+  //       } catch (error) {
+  //         console.error("Error fetching account:", error);
+  //         toast.error("Failed to fetch wallet address");
+  //       }
+  //     }
+  //   };
 
-    if (connected) {
-      getAccount();
-    }
-  }, [connected]);
+  //   if (connected) {
+  //     getAccount();
+  //   }
+  // }, [connected]);
 
   return (
     <div className={isSidebarOpen ? "toggle-sidebar" : ""}>
@@ -159,6 +164,7 @@ const Approutes = () => {
               <Route path="/fundstaking" element={<Fundstaking />} />
             </Routes>
           </div>
+          <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} />
         </section>
       </main>
 

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/img/worklob-logo-cp-no-bg.png";
 import { Toaster, toast } from "sonner";
 import metamask from "../assets/img/metamask.png";
+import smartwallet from "../assets/img/smart-wallet.png";
 import axios from "axios";
 import { useWeb3 } from "../Web3Provider";
 import API_URL from "../config";
@@ -138,6 +139,23 @@ const Login = () => {
           <p>
             Don't have an account? <Link to="/register">Register</Link>
           </p>
+          <button
+            style={{ marginBottom: "10px" }}
+            onClick={handleWalletLogin}
+            id="connbtn"
+          >
+            <img
+              src={smartwallet}
+              alt="smart Wallet"
+              style={{
+                width: "24px",
+                height: "24px",
+                borderRadius: "50%",
+                marginRight: "8px",
+              }}
+            />
+            Smart Wallet
+          </button>
           <button onClick={handleWalletLogin} id="connbtn">
             <img
               src={metamask}
@@ -149,7 +167,7 @@ const Login = () => {
                 marginRight: "8px",
               }}
             />
-            Connect Wallet
+            Metamask
           </button>
         </div>
         <Toaster />

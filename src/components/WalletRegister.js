@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/img/worklob-logo-cp-no-bg.png";
 import metamask from "../assets/img/metamask.png";
+import smartwallet from "../assets/img/smart-wallet.png";
 import { Toaster, toast } from "sonner";
 import axios from "axios";
 import { useWeb3 } from "../Web3Provider";
@@ -181,24 +182,44 @@ const WalletRegister = () => {
               </div>
 
               {!walletAddress && (
-                <button
-                  id="connbtn"
-                  type="button"
-                  style={{ marginBottom: "20px" }}
-                  onClick={handleWalletConnect}
-                >
-                  <img
-                    src={metamask}
-                    alt="Wallet"
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      borderRadius: "50%",
-                      marginRight: "8px",
-                    }}
-                  />
-                  Connect Wallet
-                </button>
+                <>
+                  <button
+                    id="connbtn"
+                    type="button"
+                    style={{ marginBottom: "10px" }}
+                    onClick={handleWalletConnect}
+                  >
+                    <img
+                      src={smartwallet}
+                      alt="Smart Wallet"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        borderRadius: "50%",
+                        marginRight: "8px",
+                      }}
+                    />
+                    Smart Wallet
+                  </button>
+                  <button
+                    id="connbtn"
+                    type="button"
+                    style={{ marginBottom: "20px" }}
+                    onClick={handleWalletConnect}
+                  >
+                    <img
+                      src={metamask}
+                      alt="Wallet"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        borderRadius: "50%",
+                        marginRight: "8px",
+                      }}
+                    />
+                    Metamask
+                  </button>
+                </>
               )}
               <button id="optionbut" type="submit">
                 Sign Up

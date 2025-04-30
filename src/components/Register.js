@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/img/worklob-logo-cp-no-bg.png";
 import metamask from "../assets/img/metamask.png";
+import smartwallet from "../assets/img/smart-wallet.png";
+
 import { Toaster, toast } from "sonner";
 import axios from "axios";
 import API_URL from "../config";
@@ -184,6 +186,23 @@ const Register = () => {
                 onClick={handleConnectClick}
               >
                 <img
+                  src={smartwallet}
+                  alt="Wallet"
+                  style={{
+                    width: "24px",
+                    height: "24px",
+                    borderRadius: "50%",
+                    marginRight: "8px",
+                  }}
+                />
+                Smart Wallet
+              </button>
+              <button
+                id="connbtn"
+                style={{ marginTop: "10px" }}
+                onClick={handleConnectClick}
+              >
+                <img
                   src={metamask}
                   alt="Wallet"
                   style={{
@@ -193,7 +212,7 @@ const Register = () => {
                     marginRight: "8px",
                   }}
                 />
-                Connect Wallet
+                Metamask
               </button>
             </>
           )}
