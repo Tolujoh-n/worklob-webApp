@@ -6,9 +6,31 @@ import {
   LOB_TOKEN_ADDRESS,
 } from "./components/Constants";
 import Walletmodal from "./components/Walletmodal";
-import { smartWallet } from "./CoinbaseSmartWallet";
+
 import { ethers } from "ethers";
 import { signInWithEthereum } from "./utils/SiweAuth";
+import { OnchainKitProvider, getOnchainKitConfig } from "@coinbase/onchainkit";
+import { TokenRow } from "@coinbase/onchainkit/token";
+import { ConnectWallet } from "@coinbase/onchainkit/wallet";
+import {
+  Avatar,
+  Identity,
+  Name,
+  Badge,
+  Address,
+} from "@coinbase/onchainkit/identity";
+import { baseSepolia, base } from "viem/chains";
+import { http } from "viem";
+
+// Initialize OnchainKit config
+const onchainKitConfig = getOnchainKitConfig({
+  appId: "11649a68-b71c-454f-8520-1f232dbe9335", // Replace with your OnchainKit app ID
+  walletConnectProjectId: "11649a68-b71c-454f-8520-1f232dbe9335", // Replace if needed
+  chains: [baseSepolia], // Set to base or baseSepolia depending on environment
+  defaultChain: baseSepolia,
+});
+
+const smartWallet = onchainKitConfig.smartWallet;
 
 const Web3Context = createContext();
 
@@ -42,9 +64,6 @@ export const Web3Provider = ({ children }) => {
       const { baseETHBalance, lobBalance } = JSON.parse(savedBalances);
       setBaseETHBalance(baseETHBalance);
       setLobBalance(lobBalance);
-      console.log("Restored balances from localStorage:");
-      console.log("Base ETH balance:", baseETHBalance);
-      console.log("LOB token balance:", lobBalance);
     }
   };
 
@@ -111,7 +130,11 @@ export const Web3Provider = ({ children }) => {
         });
 
         const web3Instance = new Web3(provider);
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const signer = ethersProvider.getSigner();
+
         setWeb3(web3Instance);
+        setSigner(signer); // Set signer for MetaMask
         setWalletAddress(accounts[0]);
         setConnected(true);
         setWalletType("metamask");
@@ -119,9 +142,7 @@ export const Web3Provider = ({ children }) => {
         localStorage.setItem("walletAddress", accounts[0]);
         localStorage.setItem("walletType", "metamask");
 
-        console.log("MetaMask connected:", accounts[0]);
-
-        await switchToBaseTestnet(); // Switch to Base testnet if not already
+        await switchToBaseTestnet();
         window.location.reload();
       } catch (error) {
         console.error("MetaMask connection failed", error);
@@ -132,22 +153,17 @@ export const Web3Provider = ({ children }) => {
 
     if (type === "smartwallet") {
       try {
-        const accounts = await smartWallet.connect();
-
-        const ethersProvider = new ethers.providers.Web3Provider(
-          smartWallet.ethereum
-        );
+        await smartWallet.connect();
+        const provider = await smartWallet.getProvider();
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
         const signer = ethersProvider.getSigner();
-
         const address = await signer.getAddress();
 
-        // Ensure we're on Base testnet
-        await smartWallet.switchChain({ chainId: BASE_TESTNET_PARAMS.chainId });
-
-        // 🔐 Sign-In With Ethereum (SIWE)
+        // Optional: Sign-In with Ethereum (SIWE)
         await signInWithEthereum(address, signer);
 
-        setWeb3(new Web3(smartWallet.ethereum)); // For compatibility with existing code
+        setWeb3(new Web3(provider));
+        setSigner(signer);
         setWalletAddress(address);
         setConnected(true);
         setWalletType("smartwallet");
@@ -155,7 +171,8 @@ export const Web3Provider = ({ children }) => {
         localStorage.setItem("walletAddress", address);
         localStorage.setItem("walletType", "smartwallet");
 
-        console.log("Smart Wallet connected:", address);
+        await smartWallet.switchChain({ chainId: BASE_TESTNET_PARAMS.chainId });
+
         window.location.reload();
       } catch (error) {
         console.error("Smart Wallet connection failed", error);
@@ -185,11 +202,7 @@ export const Web3Provider = ({ children }) => {
       const lobTokenBalance = web3.utils.fromWei(lobBalance, "ether");
       setLobBalance(lobTokenBalance);
 
-      // Save balances to localStorage
       saveBalancesToLocalStorage(ethBalance, lobTokenBalance);
-
-      console.log("Base ETH balance:", ethBalance);
-      console.log("LOB token balance:", lobTokenBalance);
     } catch (error) {
       console.error("Failed to fetch balances", error);
     }
@@ -204,6 +217,7 @@ export const Web3Provider = ({ children }) => {
     setWalletAddress("");
     setBaseETHBalance("0");
     setLobBalance("0");
+    setSigner(null); // Clear signer on disconnect
     localStorage.removeItem("walletAddress");
     localStorage.removeItem("walletType");
     localStorage.removeItem("balances");
@@ -228,15 +242,19 @@ export const Web3Provider = ({ children }) => {
         }
 
         if (savedType === "smartwallet") {
-          const providerFromSmartWallet = await smartWallet.getProvider();
-          if (providerFromSmartWallet) {
-            provider = providerFromSmartWallet;
-
+          const provider = await smartWallet.getProvider();
+          if (provider) {
             const ethersProvider = new ethers.providers.Web3Provider(provider);
             const signer = ethersProvider.getSigner();
+            const address = await signer.getAddress();
 
-            // Re-authenticate with backend
-            await signInWithEthereum(savedAddress, signer);
+            await signInWithEthereum(address, signer);
+            setWeb3(new Web3(provider));
+            setSigner(signer);
+            setWalletAddress(address);
+            setWalletType(savedType);
+            setConnected(true);
+            restoreBalancesFromLocalStorage();
           }
         }
 
@@ -269,7 +287,7 @@ export const Web3Provider = ({ children }) => {
         connected,
         walletAddress,
         walletType,
-        signer,
+        signer, // Expose signer
         baseETHBalance,
         lobBalance,
         connectWallet,

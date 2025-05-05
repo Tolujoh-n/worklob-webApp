@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useWeb3 } from "../Web3Provider";
 import { Toaster, toast } from "sonner";
 import metamask from "../assets/img/metamask.png";
@@ -6,22 +6,23 @@ import smartwallet from "../assets/img/smart-wallet.png";
 
 const Walletmodal = ({ isOpen, onClose }) => {
   const { connectWallet, walletAddress, connected } = useWeb3();
-
-  const getWalletAddress = async () => {
-    if (!walletAddress) {
-      await connectWallet();
-    }
-
-    toast.success("Wallet connected successfully!");
-  };
+  const [loading, setLoading] = useState(false);
 
   const handleWalletConnect = async (type) => {
     try {
-      await connectWallet(type);
-      toast.success("Wallet connected successfully!");
-      onClose();
+      setLoading(true); // Set loading to true when starting wallet connection
+      await connectWallet(type); // Connect to wallet
+
+      if (walletAddress) {
+        toast.success("Wallet connected successfully!"); // Show success message after connection
+        onClose(); // Close the modal
+      } else {
+        toast.error("Failed to get wallet address."); // Error in case address is missing
+      }
     } catch (error) {
       toast.error("Failed to connect wallet.");
+    } finally {
+      setLoading(false); // Reset loading state after connection attempt
     }
   };
 
@@ -32,24 +33,34 @@ const Walletmodal = ({ isOpen, onClose }) => {
       <div className="modal-content" style={modalContentStyle}>
         <i className="bi bi-x-lg" style={closeIconStyle} onClick={onClose}></i>
         <>
-          <button
-            id="connbtn"
-            type="button"
-            style={{ marginBottom: "10px" }}
-            onClick={() => handleWalletConnect("smartwallet")}
-          >
-            <img src={smartwallet} alt="Smart Wallet" style={walletIconStyle} />
-            Smart Wallet
-          </button>
-          <button
-            id="connbtn"
-            type="button"
-            style={{ marginBottom: "20px" }}
-            onClick={() => handleWalletConnect("metamask")}
-          >
-            <img src={metamask} alt="Wallet" style={walletIconStyle} />
-            Metamask
-          </button>
+          {loading ? (
+            <p>Loading...</p> // Loading indicator
+          ) : (
+            <>
+              <button
+                id="connbtn"
+                type="button"
+                style={{ marginBottom: "10px" }}
+                onClick={() => handleWalletConnect("smartwallet")}
+              >
+                <img
+                  src={smartwallet}
+                  alt="Smart Wallet"
+                  style={walletIconStyle}
+                />
+                Smart Wallet
+              </button>
+              <button
+                id="connbtn"
+                type="button"
+                style={{ marginBottom: "20px" }}
+                onClick={() => handleWalletConnect("metamask")}
+              >
+                <img src={metamask} alt="Wallet" style={walletIconStyle} />
+                Metamask
+              </button>
+            </>
+          )}
         </>
       </div>
     </div>
