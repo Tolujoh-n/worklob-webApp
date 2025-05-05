@@ -36,7 +36,7 @@ const Walletmodal = ({ isOpen, onClose }) => {
             id="connbtn"
             type="button"
             style={{ marginBottom: "10px" }}
-            onClick={() => handleWalletConnect("coinbase")}
+            onClick={() => handleWalletConnect("smartwallet")}
           >
             <img src={smartwallet} alt="Smart Wallet" style={walletIconStyle} />
             Smart Wallet

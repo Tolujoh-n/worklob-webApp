@@ -6,9 +6,9 @@ import {
   LOB_TOKEN_ADDRESS,
 } from "./components/Constants";
 import Walletmodal from "./components/Walletmodal";
-import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 import { smartWallet } from "./CoinbaseSmartWallet";
 import { ethers } from "ethers";
+import { signInWithEthereum } from "./utils/SiweAuth";
 
 const Web3Context = createContext();
 
@@ -19,6 +19,7 @@ export const Web3Provider = ({ children }) => {
   const [lobBalance, setLobBalance] = useState("0");
   const [web3, setWeb3] = useState(null);
   const [walletType, setWalletType] = useState(null);
+  const [signer, setSigner] = useState(null);
 
   const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
 
@@ -48,6 +49,11 @@ export const Web3Provider = ({ children }) => {
   };
 
   const switchToBaseTestnet = async () => {
+    if (walletType === "smartwallet") {
+      await smartWallet.switchChain({ chainId: BASE_TESTNET_PARAMS.chainId });
+      return;
+    }
+
     try {
       const currentChainId = await window.ethereum.request({
         method: "eth_chainId",
@@ -96,45 +102,69 @@ export const Web3Provider = ({ children }) => {
         window.open("https://metamask.io/download/", "_blank");
         return;
       }
+
       provider = window.ethereum;
-    } else if (type === "coinbase") {
-      const APP_NAME = "Your App Name";
-      const APP_LOGO_URL = "https://yourdomain.com/logo.png"; // Optional
-      const DEFAULT_ETH_JSONRPC_URL = BASE_TESTNET_PARAMS.rpcUrls[0];
-      const DEFAULT_CHAIN_ID = BASE_TESTNET_PARAMS.chainId;
 
-      const coinbaseWallet = new CoinbaseWalletSDK({
-        appName: APP_NAME,
-        appLogoUrl: APP_LOGO_URL,
-        darkMode: true,
-      });
+      try {
+        const accounts = await provider.request({
+          method: "eth_requestAccounts",
+        });
 
-      provider = coinbaseWallet.makeWeb3Provider(
-        DEFAULT_ETH_JSONRPC_URL,
-        DEFAULT_CHAIN_ID
-      );
+        const web3Instance = new Web3(provider);
+        setWeb3(web3Instance);
+        setWalletAddress(accounts[0]);
+        setConnected(true);
+        setWalletType("metamask");
+
+        localStorage.setItem("walletAddress", accounts[0]);
+        localStorage.setItem("walletType", "metamask");
+
+        console.log("MetaMask connected:", accounts[0]);
+
+        await switchToBaseTestnet(); // Switch to Base testnet if not already
+        window.location.reload();
+      } catch (error) {
+        console.error("MetaMask connection failed", error);
+      }
+
+      return;
     }
 
-    try {
-      const accounts = await provider.request({
-        method: "eth_requestAccounts",
-      });
-      const web3Instance = new Web3(provider);
-      setWeb3(web3Instance);
-      setWalletAddress(accounts[0]);
-      setConnected(true);
-      setWalletType(type);
+    if (type === "smartwallet") {
+      try {
+        const accounts = await smartWallet.connect();
 
-      localStorage.setItem("walletAddress", accounts[0]);
-      localStorage.setItem("walletType", type);
+        const ethersProvider = new ethers.providers.Web3Provider(
+          smartWallet.ethereum
+        );
+        const signer = ethersProvider.getSigner();
 
-      console.log("Connected address:", accounts[0]);
+        const address = await signer.getAddress();
 
-      await switchToBaseTestnet(); // Still uses MetaMask window.ethereum under the hood
-      window.location.reload();
-    } catch (error) {
-      console.error("Wallet connection failed", error);
+        // Ensure we're on Base testnet
+        await smartWallet.switchChain({ chainId: BASE_TESTNET_PARAMS.chainId });
+
+        // 🔐 Sign-In With Ethereum (SIWE)
+        await signInWithEthereum(address, signer);
+
+        setWeb3(new Web3(smartWallet.ethereum)); // For compatibility with existing code
+        setWalletAddress(address);
+        setConnected(true);
+        setWalletType("smartwallet");
+
+        localStorage.setItem("walletAddress", address);
+        localStorage.setItem("walletType", "smartwallet");
+
+        console.log("Smart Wallet connected:", address);
+        window.location.reload();
+      } catch (error) {
+        console.error("Smart Wallet connection failed", error);
+      }
+
+      return;
     }
+
+    console.error("Unsupported wallet type:", type);
   };
 
   const fetchBalances = async (address) => {
@@ -165,48 +195,68 @@ export const Web3Provider = ({ children }) => {
     }
   };
 
-  const disconnectWallet = () => {
+  const disconnectWallet = async () => {
+    if (walletType === "smartwallet") {
+      await smartWallet.disconnect();
+    }
+
     setConnected(false);
     setWalletAddress("");
     setBaseETHBalance("0");
     setLobBalance("0");
     localStorage.removeItem("walletAddress");
+    localStorage.removeItem("walletType");
     localStorage.removeItem("balances");
   };
 
   const shortenAddress = (address) =>
     address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "";
 
+  // Restore wallet connection from localStorage
   useEffect(() => {
-    const savedAddress = localStorage.getItem("walletAddress");
-    const savedType = localStorage.getItem("walletType");
+    const restoreWalletConnection = async () => {
+      const savedAddress = localStorage.getItem("walletAddress");
+      const savedType = localStorage.getItem("walletType");
 
-    if (savedAddress && savedType) {
-      let provider;
-      if (savedType === "metamask" && window.ethereum) {
-        provider = window.ethereum;
-      } else if (savedType === "coinbase") {
-        const coinbaseWallet = new CoinbaseWalletSDK({
-          appName: "Your App Name",
-          darkMode: true,
-        });
-        provider = coinbaseWallet.makeWeb3Provider(
-          BASE_TESTNET_PARAMS.rpcUrls[0],
-          BASE_TESTNET_PARAMS.chainId
-        );
-      }
+      if (!savedAddress || !savedType) return;
 
-      if (provider) {
-        const web3Instance = new Web3(provider);
-        setWeb3(web3Instance);
-        setWalletAddress(savedAddress);
-        setWalletType(savedType);
-        setConnected(true);
-        restoreBalancesFromLocalStorage();
+      try {
+        let provider = null;
+
+        if (savedType === "metamask" && window.ethereum) {
+          provider = window.ethereum;
+        }
+
+        if (savedType === "smartwallet") {
+          const providerFromSmartWallet = await smartWallet.getProvider();
+          if (providerFromSmartWallet) {
+            provider = providerFromSmartWallet;
+
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const signer = ethersProvider.getSigner();
+
+            // Re-authenticate with backend
+            await signInWithEthereum(savedAddress, signer);
+          }
+        }
+
+        if (provider) {
+          const web3Instance = new Web3(provider);
+          setWeb3(web3Instance);
+          setWalletAddress(savedAddress);
+          setWalletType(savedType);
+          setConnected(true);
+          restoreBalancesFromLocalStorage();
+        }
+      } catch (err) {
+        console.error("Error restoring wallet:", err);
       }
-    }
+    };
+
+    restoreWalletConnection();
   }, []);
 
+  // Fetch balances when wallet is ready
   useEffect(() => {
     if (connected && walletAddress) {
       fetchBalances(walletAddress);
@@ -218,6 +268,8 @@ export const Web3Provider = ({ children }) => {
       value={{
         connected,
         walletAddress,
+        walletType,
+        signer,
         baseETHBalance,
         lobBalance,
         connectWallet,

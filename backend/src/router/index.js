@@ -20,6 +20,6 @@ router.use("/application", applyJobRouter, buyGigRouter);
 router.use("/chat", chatRouter);
 router.use("/ai_image", AI_imageRouter);
 router.use("/profile", profileRouter);
-router.use("/Smartwallet", Smartwallet);
+router.use("/smartwallet", Smartwallet);
 
 module.exports = router;
