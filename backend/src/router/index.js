@@ -9,6 +9,7 @@ const buyGigRouter = require("./buyGig");
 const chatRouter = require("./chatRouter");
 const AI_imageRouter = require("./ai-generate-image");
 const profileRouter = require("./Profile");
+const Smartwallet = require("./Smartwallet");
 const z = require("zod");
 
 router.use("/user", userRouter);
@@ -19,5 +20,6 @@ router.use("/application", applyJobRouter, buyGigRouter);
 router.use("/chat", chatRouter);
 router.use("/ai_image", AI_imageRouter);
 router.use("/profile", profileRouter);
+router.use("/Smartwallet", Smartwallet);
 
 module.exports = router;

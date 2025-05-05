@@ -33,3 +33,8 @@ export const BASE_TESTNET_PARAMS = {
   rpcUrls: ["https://sepolia.base.org"], // Base Sepolia RPC URL
   blockExplorerUrls: ["https://sepolia-explorer.base.org"], // Block Explorer URL for Base Sepolia Testnet
 };
+
+export const WALLET_TYPES = {
+  METAMASK: "metamask",
+  COINBASE: "coinbase",
+};

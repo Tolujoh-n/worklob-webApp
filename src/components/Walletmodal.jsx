@@ -15,9 +15,11 @@ const Walletmodal = ({ isOpen, onClose }) => {
     toast.success("Wallet connected successfully!");
   };
 
-  const handleWalletConnect = async () => {
+  const handleWalletConnect = async (type) => {
     try {
-      await getWalletAddress();
+      await connectWallet(type);
+      toast.success("Wallet connected successfully!");
+      onClose();
     } catch (error) {
       toast.error("Failed to connect wallet.");
     }
@@ -34,7 +36,7 @@ const Walletmodal = ({ isOpen, onClose }) => {
             id="connbtn"
             type="button"
             style={{ marginBottom: "10px" }}
-            onClick={handleWalletConnect}
+            onClick={() => handleWalletConnect("coinbase")}
           >
             <img src={smartwallet} alt="Smart Wallet" style={walletIconStyle} />
             Smart Wallet
@@ -43,7 +45,7 @@ const Walletmodal = ({ isOpen, onClose }) => {
             id="connbtn"
             type="button"
             style={{ marginBottom: "20px" }}
-            onClick={handleWalletConnect}
+            onClick={() => handleWalletConnect("metamask")}
           >
             <img src={metamask} alt="Wallet" style={walletIconStyle} />
             Metamask

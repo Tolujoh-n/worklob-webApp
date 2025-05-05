@@ -3,7 +3,8 @@ import { useWeb3 } from "../../Web3Provider";
 import { Toaster, toast } from "sonner";
 
 const Depositmodal = ({ isOpen, onClose }) => {
-  const { connectWallet, walletAddress, connected } = useWeb3();
+  const { connectWallet, openWalletmodal, walletAddress, connected } =
+    useWeb3();
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(walletAddress);
@@ -45,7 +46,7 @@ const Depositmodal = ({ isOpen, onClose }) => {
             </h3>
             <br />
             <div style={{ textAlign: "center" }}>
-              <button onClick={connectWallet} className="modall-button">
+              <button onClick={openWalletmodal} className="modall-button">
                 Connect Wallet
               </button>
             </div>
