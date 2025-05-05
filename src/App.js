@@ -6,25 +6,43 @@ import WalletRegister from "./components/WalletRegister";
 import Approutes from "./components/Approutes";
 import { Web3Provider } from "./Web3Provider";
 import { base } from "viem/chains";
-import { OnchainKitProvider, getOnchainKitConfig } from "@coinbase/onchainkit";
-import { baseSepolia } from "viem/chains";
-import { createPublicClient, http } from "viem";
+import { OnchainKitProvider } from "@coinbase/onchainkit";
+
+import { ReactNode } from "react";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { baseSepolia } from "wagmi/chains";
+import { coinbaseWallet } from "wagmi/connectors";
+
+const wagmiConfig = createConfig({
+  chains: [baseSepolia],
+  connectors: [
+    coinbaseWallet({
+      appName: "onchainkit",
+    }),
+  ],
+  ssr: true,
+  transports: {
+    [baseSepolia.id]: http(),
+  },
+});
 
 function App() {
   return (
     // Wrap your app with both OnchainKitProvider and Web3Provider to use their context
     <OnchainKitProvider apiKey="DaSMXWYnsSsDIb0Qv5UM37tvgAV1h8s5" chain={base}>
-      <Web3Provider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/wallet-register" element={<WalletRegister />} />
-            <Route path="/dashboard/*" element={<Approutes />} />
-          </Routes>
-        </Router>
-      </Web3Provider>
+      <WagmiProvider config={wagmiConfig}>
+        <Web3Provider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/wallet-register" element={<WalletRegister />} />
+              <Route path="/dashboard/*" element={<Approutes />} />
+            </Routes>
+          </Router>
+        </Web3Provider>
+      </WagmiProvider>
     </OnchainKitProvider>
   );
 }

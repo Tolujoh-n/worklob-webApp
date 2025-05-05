@@ -1,28 +1,56 @@
-import React, { useState } from "react";
+import React from "react";
 import { useWeb3 } from "../Web3Provider";
 import { Toaster, toast } from "sonner";
 import metamask from "../assets/img/metamask.png";
 import smartwallet from "../assets/img/smart-wallet.png";
+import { ConnectWallet } from "@coinbase/onchainkit/wallet";
+import { base } from "wagmi/chains";
+import { createSiweMessage } from "viem/siwe";
+import { useSignMessage } from "wagmi";
+
+const message = createSiweMessage({
+  address: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
+  chainId: base.id,
+  domain: "example.com",
+  nonce: "foobarbaz",
+  uri: "https://example.com/path",
+  version: "1",
+});
 
 const Walletmodal = ({ isOpen, onClose }) => {
-  const { connectWallet, walletAddress, connected } = useWeb3();
-  const [loading, setLoading] = useState(false);
+  const { walletAddress, connected } = useWeb3();
+  const { signMessage } = useSignMessage();
 
-  const handleWalletConnect = async (type) => {
+  const getSmartWalletAddress = async () => {
     try {
-      setLoading(true); // Set loading to true when starting wallet connection
-      await connectWallet(type); // Connect to wallet
+      await ConnectWallet(); // this is from @coinbase/onchainkit
+      toast.success("Smart Wallet connected!");
+    } catch (error) {
+      toast.error("Failed to connect Smart Wallet.");
+    }
+  };
 
-      if (walletAddress) {
-        toast.success("Wallet connected successfully!"); // Show success message after connection
-        onClose(); // Close the modal
-      } else {
-        toast.error("Failed to get wallet address."); // Error in case address is missing
-      }
+  const handleSmartwallet = async () => {
+    try {
+      await getSmartWalletAddress();
+    } catch (error) {
+      toast.error("Failed to connect Smart Wallet.");
+    }
+  };
+
+  const getWalletAddress = async () => {
+    // if (!walletAddress) {
+    //   await connectWallet();
+    // }
+
+    toast.success("Wallet connected successfully!");
+  };
+
+  const handleWalletConnect = async () => {
+    try {
+      await getWalletAddress();
     } catch (error) {
       toast.error("Failed to connect wallet.");
-    } finally {
-      setLoading(false); // Reset loading state after connection attempt
     }
   };
 
@@ -33,34 +61,30 @@ const Walletmodal = ({ isOpen, onClose }) => {
       <div className="modal-content" style={modalContentStyle}>
         <i className="bi bi-x-lg" style={closeIconStyle} onClick={onClose}></i>
         <>
-          {loading ? (
-            <p>Loading...</p> // Loading indicator
-          ) : (
-            <>
-              <button
-                id="connbtn"
-                type="button"
-                style={{ marginBottom: "10px" }}
-                onClick={() => handleWalletConnect("smartwallet")}
-              >
-                <img
-                  src={smartwallet}
-                  alt="Smart Wallet"
-                  style={walletIconStyle}
-                />
-                Smart Wallet
-              </button>
-              <button
-                id="connbtn"
-                type="button"
-                style={{ marginBottom: "20px" }}
-                onClick={() => handleWalletConnect("metamask")}
-              >
-                <img src={metamask} alt="Wallet" style={walletIconStyle} />
-                Metamask
-              </button>
-            </>
-          )}
+          <ConnectWallet
+            onConnect={() => {
+              signMessage({ message });
+            }}
+          />
+          
+          <button
+            id="connbtn"
+            type="button"
+            style={{ marginBottom: "10px" }}
+            onClick={handleSmartwallet}
+          >
+            <img src={smartwallet} alt="Smart Wallet" style={walletIconStyle} />
+            Smart Wallet
+          </button>
+          <button
+            id="connbtn"
+            type="button"
+            style={{ marginBottom: "20px" }}
+            onClick={handleWalletConnect}
+          >
+            <img src={metamask} alt="Wallet" style={walletIconStyle} />
+            Metamask
+          </button>
         </>
       </div>
     </div>
