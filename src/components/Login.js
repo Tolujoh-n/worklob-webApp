@@ -16,10 +16,7 @@ const Login = () => {
   const {
     address,
     isConnected,
-    smartEthBalance,
-    formattedLobBalance,
     handleConnectClick,
-    shortSmartAddress,
   } = useSmartWallet();
   const navigate = useNavigate();
 
@@ -148,10 +145,7 @@ const Login = () => {
           <p>
             Don't have an account? <Link to="/register">Register</Link>
           </p>
-          <p>{shortSmartAddress}</p>
-          <p>{address}</p>
-          <p>ETH: {smartEthBalance}</p>
-          <p>LOB: {formattedLobBalance}</p>
+
           <button
             style={{ marginBottom: "10px" }}
             onClick={() => {

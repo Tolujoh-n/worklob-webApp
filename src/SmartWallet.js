@@ -56,17 +56,21 @@ export const SmartWalletProvider = ({ children }) => {
     }
 
     try {
-      // LOB token balance
+      // Fetch LOB token balance
       const lob = await publicClient.readContract({
         address: LOB_TOKEN_ADDRESS,
         abi: LOB_TOKEN_ABI,
         functionName: "balanceOf",
         args: [address],
       });
-      setLobTokenBalance(lob ?? 0n);
+
+      // Assuming 18 decimals for LOB token
+      const formattedBalance = formatUnits(lob, 18);
+      setLobTokenBalance(formattedBalance);
+      console.log("LOB token balance:", formattedBalance);
     } catch (error) {
       console.error("LOB token fetch failed:", error);
-      setLobTokenBalance(0n); // ensures fallback to 0
+      setLobTokenBalance(0n);
     }
   }, [address, publicClient]);
 
