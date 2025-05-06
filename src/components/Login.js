@@ -7,13 +7,63 @@ import smartwallet from "../assets/img/smart-wallet.png";
 import axios from "axios";
 import { useWeb3 } from "../Web3Provider";
 import API_URL from "../config";
+import { ConnectWallet } from "@coinbase/onchainkit/wallet";
+import { base } from "wagmi/chains";
+import { createSiweMessage } from "viem/siwe";
+import {
+  Address,
+  Avatar,
+  Name,
+  Identity,
+  Badge,
+  EthBalance,
+} from "@coinbase/onchainkit/identity";
+import {
+  useSignMessage,
+  useAccount,
+  useConnect,
+  useDisconnect,
+  usePublicClient,
+} from "wagmi";
+
+const message = createSiweMessage({
+  address: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
+  chainId: base.id,
+  domain: "example.com",
+  nonce: "foobarbaz",
+  uri: "https://example.com/path",
+  version: "1",
+});
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const { connected, walletAddress, connectWallet } = useWeb3();
   const navigate = useNavigate();
+  const { signMessage } = useSignMessage();
+  const { connectors, connect, status: connectStatus } = useConnect();
+  const { address, status } = useAccount();
 
+  const handleConnectClick = async () => {
+    const connector = connectors[0]; // Get the first available connector
+    if (!connector) {
+      toast.error("No wallet connector found!");
+      return;
+    }
+
+    connect(
+      { connector },
+      {
+        onSuccess: () => {
+          signMessage({ message });
+          toast.success("Wallet connected!");
+        },
+        onError: (error) => {
+          toast.error("Failed to connect wallet: " + error.message);
+        },
+      }
+    );
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -139,9 +189,17 @@ const Login = () => {
           <p>
             Don't have an account? <Link to="/register">Register</Link>
           </p>
+          <p>
+            {address} {EthBalance}
+          </p>
+          <Address />
+          <EthBalance />
+
           <button
             style={{ marginBottom: "10px" }}
-            onClick={handleWalletLogin}
+            onClick={() => {
+              handleConnectClick(); // Use the same handler as ConnectWallet
+            }}
             id="connbtn"
           >
             <img
@@ -156,6 +214,12 @@ const Login = () => {
             />
             Smart Wallet
           </button>
+
+          <ConnectWallet
+            onConnect={() => {
+              signMessage({ message });
+            }}
+          />
           <button onClick={handleWalletLogin} id="connbtn">
             <img
               src={metamask}

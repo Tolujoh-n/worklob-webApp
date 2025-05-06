@@ -6,6 +6,8 @@ import WalletRegister from "./components/WalletRegister";
 import Approutes from "./components/Approutes";
 import { Web3Provider } from "./Web3Provider";
 import { base } from "viem/chains";
+import { SmartWalletProvider } from "./SmartWallet";
+
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 
 import { ReactNode } from "react";
@@ -31,17 +33,19 @@ function App() {
     // Wrap your app with both OnchainKitProvider and Web3Provider to use their context
     <OnchainKitProvider apiKey="DaSMXWYnsSsDIb0Qv5UM37tvgAV1h8s5" chain={base}>
       <WagmiProvider config={wagmiConfig}>
-        <Web3Provider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/wallet-register" element={<WalletRegister />} />
-              <Route path="/dashboard/*" element={<Approutes />} />
-            </Routes>
-          </Router>
-        </Web3Provider>
+        <SmartWalletProvider>
+          <Web3Provider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/wallet-register" element={<WalletRegister />} />
+                <Route path="/dashboard/*" element={<Approutes />} />
+              </Routes>
+            </Router>
+          </Web3Provider>
+        </SmartWalletProvider>
       </WagmiProvider>
     </OnchainKitProvider>
   );
