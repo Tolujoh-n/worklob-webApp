@@ -13,11 +13,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const { connected, walletAddress, connectWallet } = useWeb3();
-  const {
-    address,
-    isConnected,
-    handleConnectClick,
-  } = useSmartWallet();
+  const { address, isConnected, handleConnectClick } = useSmartWallet();
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {

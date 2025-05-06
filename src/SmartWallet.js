@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { base } from "wagmi/chains";
 import { createSiweMessage } from "viem/siwe";
 import { formatEther, formatUnits } from "viem";
+import Walletmodal from "./components/Walletmodal";
 import { LOB_TOKEN_ADDRESS, LOB_TOKEN_ABI } from "./components/Constants";
 
 const message = createSiweMessage({
@@ -36,6 +37,10 @@ export const SmartWalletProvider = ({ children }) => {
   const { disconnect } = useDisconnect();
   const { address, status, isConnected } = useAccount();
   const publicClient = usePublicClient();
+  const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
+
+  const openWalletmodal = () => setIsWalletmodalOpen(true);
+  const closeWalletmodal = () => setIsWalletmodalOpen(false);
 
   const [ethBalance, setEthBalance] = useState(0n);
   const [lobTokenBalance, setLobTokenBalance] = useState(0n);
@@ -120,10 +125,12 @@ export const SmartWalletProvider = ({ children }) => {
         smartEthBalance,
         formattedLobBalance,
         ethBalance,
-        lobTokenBalance,
+        openWalletmodal,
+        closeWalletmodal,
       }}
     >
       {children}
+      {/* <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} /> */}
     </SmartWalletContext.Provider>
   );
 };
