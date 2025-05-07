@@ -7,6 +7,8 @@ import { Toaster, toast } from "sonner";
 import axios from "axios";
 import { useWeb3 } from "../Web3Provider";
 import API_URL from "../config";
+import { useWallet } from "./WalletContext";
+import { useSmartWallet } from "../SmartWallet";
 
 const WalletRegister = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +18,19 @@ const WalletRegister = () => {
     role: "",
   });
   const [roleSelected, setRoleSelected] = useState(false);
-  const { connectWallet, walletAddress, connected } = useWeb3();
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
+  // Use correct wallet provider based on walletType
+  const { connected, walletAddress, connectWallet } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
   const navigate = useNavigate();
 
   const handleRoleSelect = (role) => {
@@ -40,11 +54,26 @@ const WalletRegister = () => {
     toast.success("Wallet connected successfully!");
   };
 
-  const handleWalletConnect = async () => {
-    try {
-      await getWalletAddress();
-    } catch (error) {
-      toast.error("Failed to connect wallet.");
+  const handleWalletLogin = async (type) => {
+    setWalletType(type); // update context
+
+    let provider;
+    if (type === "metamask") {
+      provider = web3;
+    } else if (type === "smartwallet") {
+      provider = smartWallet;
+    }
+
+    if (provider?.connectWallet) {
+      try {
+        await provider.connectWallet();
+        await getWalletAddress();
+      } catch (error) {
+        console.error("Wallet connection error:", error);
+        toast.error("Failed to connect wallet.");
+      }
+    } else {
+      toast.error("Wallet provider not available.");
     }
   };
 
@@ -187,7 +216,7 @@ const WalletRegister = () => {
                     id="connbtn"
                     type="button"
                     style={{ marginBottom: "10px" }}
-                    onClick={handleWalletConnect}
+                    onClick={() => handleWalletLogin("smartwallet")}
                   >
                     <img
                       src={smartwallet}
@@ -205,7 +234,7 @@ const WalletRegister = () => {
                     id="connbtn"
                     type="button"
                     style={{ marginBottom: "20px" }}
-                    onClick={handleWalletConnect}
+                    onClick={() => handleWalletLogin("metamask")}
                   >
                     <img
                       src={metamask}

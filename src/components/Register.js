@@ -3,9 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/img/worklob-logo-cp-no-bg.png";
 import metamask from "../assets/img/metamask.png";
 import smartwallet from "../assets/img/smart-wallet.png";
-import { useWeb3 } from "../Web3Provider";
-import { useSmartWallet } from "../SmartWallet";
-import { useWallet } from "./WalletContext";
 
 import { Toaster, toast } from "sonner";
 import axios from "axios";
@@ -19,19 +16,6 @@ const Register = () => {
     confirmPassword: "",
     role: "",
   });
-  // Call both hooks unconditionally
-  const web3 = useWeb3();
-  const smartWallet = useSmartWallet();
-  const { walletType, setWalletType } = useWallet();
-
-  // Use correct wallet provider based on walletType
-  const { connected, walletAddress, connectWallet } =
-    (walletType === "metamask"
-      ? web3
-      : walletType === "smartwallet"
-      ? smartWallet
-      : {}) || {};
-
   const [roleSelected, setRoleSelected] = useState(false);
   const navigate = useNavigate();
 
