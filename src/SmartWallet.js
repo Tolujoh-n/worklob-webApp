@@ -117,10 +117,10 @@ export const SmartWalletProvider = ({ children }) => {
     <SmartWalletContext.Provider
       value={{
         disconnect,
-        address,
+        walletAddress: address,
         status,
-        isConnected,
-        handleConnectClick,
+        connected: isConnected,
+        connectWallet: handleConnectClick,
         shortSmartAddress,
         smartEthBalance,
         formattedLobBalance,

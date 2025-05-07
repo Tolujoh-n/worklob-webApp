@@ -7,6 +7,7 @@ import Approutes from "./components/Approutes";
 import { Web3Provider } from "./Web3Provider";
 import { base } from "viem/chains";
 import { SmartWalletProvider } from "./SmartWallet";
+import { WalletProvider } from "./components/WalletContext";
 
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 
@@ -31,23 +32,28 @@ const wagmiConfig = createConfig({
 function App() {
   return (
     // Wrap your app with both OnchainKitProvider and Web3Provider to use their context
-    <OnchainKitProvider apiKey="DaSMXWYnsSsDIb0Qv5UM37tvgAV1h8s5" chain={base}>
-      <WagmiProvider config={wagmiConfig}>
-        <SmartWalletProvider>
-          <Web3Provider>
-            <Router>
-              <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/wallet-register" element={<WalletRegister />} />
-                <Route path="/dashboard/*" element={<Approutes />} />
-              </Routes>
-            </Router>
-          </Web3Provider>
-        </SmartWalletProvider>
-      </WagmiProvider>
-    </OnchainKitProvider>
+    <WalletProvider>
+      <OnchainKitProvider
+        apiKey="DaSMXWYnsSsDIb0Qv5UM37tvgAV1h8s5"
+        chain={base}
+      >
+        <WagmiProvider config={wagmiConfig}>
+          <SmartWalletProvider>
+            <Web3Provider>
+              <Router>
+                <Routes>
+                  <Route path="/" element={<Login />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/wallet-register" element={<WalletRegister />} />
+                  <Route path="/dashboard/*" element={<Approutes />} />
+                </Routes>
+              </Router>
+            </Web3Provider>
+          </SmartWalletProvider>
+        </WagmiProvider>
+      </OnchainKitProvider>
+    </WalletProvider>
   );
 }
 

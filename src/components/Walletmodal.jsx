@@ -1,58 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useWeb3 } from "../Web3Provider";
+import { useSmartWallet } from "../SmartWallet";
+import { useWallet } from "./WalletContext";
 import { Toaster, toast } from "sonner";
 import metamask from "../assets/img/metamask.png";
 import smartwallet from "../assets/img/smart-wallet.png";
-import { ConnectWallet } from "@coinbase/onchainkit/wallet";
-import { base } from "wagmi/chains";
-import { createSiweMessage } from "viem/siwe";
-import { useSignMessage } from "wagmi";
-
-const message = createSiweMessage({
-  address: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
-  chainId: base.id,
-  domain: "example.com",
-  nonce: "foobarbaz",
-  uri: "https://example.com/path",
-  version: "1",
-});
 
 const Walletmodal = ({ isOpen, onClose }) => {
-  const { walletAddress, connected } = useWeb3();
-  const { signMessage } = useSignMessage();
+  const { walletType, setWalletType } = useWallet();
 
-  const getSmartWalletAddress = async () => {
-    try {
-      await ConnectWallet(); // this is from @coinbase/onchainkit
-      toast.success("Smart Wallet connected!");
-    } catch (error) {
-      toast.error("Failed to connect Smart Wallet.");
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
+  // Use correct wallet provider based on walletType
+  const { connected, walletAddress, connectWallet } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+  const handleSmartwallet = () => {
+    setWalletType("smartwallet");
+  };
+
+  const handleWalletConnect = () => {
+    setWalletType("metamask");
+  };
+
+  // Automatically connect wallet when walletType changes
+  useEffect(() => {
+    if (walletType && connectWallet) {
+      connectWallet();
     }
-  };
-
-  const handleSmartwallet = async () => {
-    try {
-      await getSmartWalletAddress();
-    } catch (error) {
-      toast.error("Failed to connect Smart Wallet.");
-    }
-  };
-
-  const getWalletAddress = async () => {
-    // if (!walletAddress) {
-    //   await connectWallet();
-    // }
-
-    toast.success("Wallet connected successfully!");
-  };
-
-  const handleWalletConnect = async () => {
-    try {
-      await getWalletAddress();
-    } catch (error) {
-      toast.error("Failed to connect wallet.");
-    }
-  };
+  }, [walletType, connectWallet]);
 
   if (!isOpen) return null;
 
@@ -61,12 +42,6 @@ const Walletmodal = ({ isOpen, onClose }) => {
       <div className="modal-content" style={modalContentStyle}>
         <i className="bi bi-x-lg" style={closeIconStyle} onClick={onClose}></i>
         <>
-          <ConnectWallet
-            onConnect={() => {
-              signMessage({ message });
-            }}
-          />
-          
           <button
             id="connbtn"
             type="button"
