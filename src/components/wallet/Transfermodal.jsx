@@ -24,26 +24,6 @@ const Transfermodal = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState("");
   const [sender, setSender] = useState("");
 
-  useEffect(() => {
-    const getAccount = async () => {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
-          setSender(accounts[0]);
-        } catch (error) {
-          console.error("Error fetching account:", error);
-          toast.error("Failed to fetch wallet address");
-        }
-      }
-    };
-
-    if (connected) {
-      getAccount();
-    }
-  }, [connected]);
-
   const handleTransfer = async () => {
     if (!recipient || !amount) {
       toast.error("Please enter recipient address and amount.");

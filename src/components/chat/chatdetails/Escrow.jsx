@@ -46,26 +46,6 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
     userId = decodedToken.userId;
   }
 
-  useEffect(() => {
-    const getAccount = async () => {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
-          setSender(accounts[0]);
-        } catch (error) {
-          console.error("Error fetching account:", error);
-          toast.error("Failed to fetch wallet address");
-        }
-      }
-    };
-
-    if (connected) {
-      getAccount();
-    }
-  }, [connected]);
-
   // Fetch chat details when the component mounts
   useEffect(() => {
     const fetchChatDetails = async () => {

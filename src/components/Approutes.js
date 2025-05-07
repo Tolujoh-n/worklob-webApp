@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Toaster, toast } from "sonner";
 import Walletmodal from "./Walletmodal.jsx";
+import { useWallet } from "./WalletContext";
+import { useWeb3 } from "../Web3Provider";
+import { useSmartWallet } from "../SmartWallet";
 
 import Home from "../views/Home";
 import Navbar from "../components/Navbar";
@@ -62,6 +65,20 @@ import "../assets/css/dashboard.css";
 const Approutes = () => {
   const [activeLink, setActiveLink] = useState("");
   const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
+  const { walletType, setWalletType } = useWallet();
+  const [sender, setSender] = useState("");
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
+  // Use correct wallet provider based on walletType
+  const { connected, walletAddress, connectWallet } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
 
   const openWalletmodal = () => setIsWalletmodalOpen(true);
   const closeWalletmodal = () => setIsWalletmodalOpen(false);
@@ -79,6 +96,27 @@ const Approutes = () => {
   const closeSidebar = () => {
     setSidebarOpen(false); // Explicitly sets the state to false
   };
+
+  // automaticall call meta,ask if metamask is selected
+  useEffect(() => {
+    const getAccount = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          setSender(accounts[0]);
+        } catch (error) {
+          console.error("Error fetching account:", error);
+          toast.error("Failed to fetch wallet address");
+        }
+      }
+    };
+
+    if (walletType === "metamask" && connected) {
+      getAccount();
+    }
+  }, [walletType, connected]);
 
   return (
     <div className={isSidebarOpen ? "toggle-sidebar" : ""}>

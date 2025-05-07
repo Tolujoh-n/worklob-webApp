@@ -46,7 +46,7 @@ const Walletmodal = ({ isOpen, onClose }) => {
       }
     };
 
-    if (walletType === "metamask") {
+    if (walletType === "metamask" && connected) {
       getAccount();
     }
   }, [walletType, connected]);

@@ -24,7 +24,7 @@ function Stake() {
       : walletType === "smartwallet"
       ? smartWallet
       : {}) || {};
-      
+
   const [sender, setSender] = useState("");
 
   let userId;
@@ -45,26 +45,6 @@ function Stake() {
   const handleClick = (tab) => {
     setActiveTab(tab);
   };
-
-  useEffect(() => {
-    const getAccount = async () => {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
-          setSender(accounts[0]);
-        } catch (error) {
-          console.error("Error fetching account:", error);
-          toast.error("Failed to fetch wallet address");
-        }
-      }
-    };
-
-    if (connected) {
-      getAccount();
-    }
-  }, [connected]);
 
   return (
     <>
