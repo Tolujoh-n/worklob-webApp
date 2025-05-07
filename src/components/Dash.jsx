@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import Modal from "./Modal"; // Assuming Modal is still required
 import Notification from "./Notification";
 import { useWeb3 } from "../Web3Provider";
+import { useSmartWallet } from "../SmartWallet";
+import { useWallet } from "./WalletContext";
 import { Toaster, toast } from "sonner";
 
 const truncateText = (text, wordLimit) => {
@@ -15,8 +17,18 @@ const truncateText = (text, wordLimit) => {
 };
 
 const Dash = () => {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
   const [selectedTab, setSelectedTab] = useState("active");
-  const { connectWallet, connected, baseETHBalance, walletAddress } = useWeb3();
+  const { connectWallet, connected, baseETHBalance, walletAddress } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
 
   const tabContent = {
     active: {

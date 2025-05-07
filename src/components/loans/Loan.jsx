@@ -3,11 +3,25 @@ import Borrow from "./Borrow";
 import Lend from "./Lend";
 import "./loanasset/loanstyle.css";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import { Toaster, toast } from "sonner";
 
 const Loan = () => {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
   const [activeTab, setActiveTab] = useState("overview");
-  const { connectWallet, connected } = useWeb3();
+  const { connectWallet, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [sender, setSender] = useState("");
 
   const handleClick = (tab) => {

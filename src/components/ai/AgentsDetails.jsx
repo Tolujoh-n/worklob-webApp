@@ -6,6 +6,8 @@ import AI_Integration from "./AI_Integration";
 import { toast } from "sonner";
 import MarkdownMessage from "./MarkdownMessage";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import {
   payForSingleUse,
   subscribeToAI,
@@ -20,7 +22,18 @@ function AgentsDetails() {
   const aiId = agent?.id;
   const providerAddress = agent?.provider_address;
   const singleFee = agent?.singleFee;
-  const { connectWallet, walletAddress, connected } = useWeb3();
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+  const { connectWallet, walletAddress, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const navigate = useNavigate();
 
   const [userInput, setUserInput] = useState("");

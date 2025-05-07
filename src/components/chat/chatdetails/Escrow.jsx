@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../chat.css";
 import { useWeb3 } from "../../../Web3Provider";
+import { useSmartWallet } from "../../../SmartWallet";
+import { useWallet } from "../../WalletContext";
 import { toast } from "sonner";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -8,7 +10,18 @@ import { deposit, complete, confirm } from "./EscrowChainIntegration";
 import API_URL from "../../../config";
 
 const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
-  const { connectWallet, walletAddress, connected } = useWeb3();
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+  const { connectWallet, walletAddress, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [sender, setSender] = useState("");
 
   const [buttonStates, setButtonStates] = useState([

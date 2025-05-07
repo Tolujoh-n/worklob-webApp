@@ -5,11 +5,24 @@ import worklob from "../assets/img/worklob-coin.png";
 import useimage from "../assets/address.jpg";
 import Modal from "./Modal";
 import { useWeb3 } from "../Web3Provider";
+import { useSmartWallet } from "../SmartWallet";
+import { useWallet } from "./WalletContext";
 import Followhr from "./Followhr";
 
 const Sidebar = () => {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
   const [isGamemodalOpen, setIsGamemodalOpen] = useState(false);
-  const { baseETHBalance, lobBalance } = useWeb3();
+  const { baseETHBalance, lobBalance } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
 
   const handleGamemodalClick = () => {
     setIsGamemodalOpen(true);

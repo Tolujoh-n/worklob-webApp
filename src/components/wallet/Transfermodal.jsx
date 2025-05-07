@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import { Toaster, toast } from "sonner";
 import Web3 from "web3";
 import { LOB_TOKEN_ADDRESS, LOB_TOKEN_ABI } from "../Constants";
 
 const Transfermodal = ({ isOpen, onClose }) => {
-  const { connectWallet, connected } = useWeb3();
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+  const { connectWallet, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [token, setToken] = useState("ETH");
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");

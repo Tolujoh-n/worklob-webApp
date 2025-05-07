@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import { Toaster, toast } from "sonner";
 import Web3 from "web3";
 import { LOB_TOKEN_ADDRESS, LOB_TOKEN_ABI } from "../Constants";
@@ -7,7 +9,18 @@ import ETHLogo from "../../assets/img/eth.png";
 import LOBLogo from "../../assets/img/worklob-coin.png";
 
 const Swapmodal = ({ isOpen, onClose }) => {
-  const { connectWallet, walletAddress, connected } = useWeb3();
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+  const { connectWallet, walletAddress, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [fromToken, setFromToken] = useState("ETH");
   const [toToken, setToToken] = useState("LOB");
   const [amount, setAmount] = useState("");

@@ -1,10 +1,22 @@
 import React from "react";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import { Toaster, toast } from "sonner";
 
 const Depositmodal = ({ isOpen, onClose }) => {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
   const { connectWallet, openWalletmodal, walletAddress, connected } =
-    useWeb3();
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(walletAddress);

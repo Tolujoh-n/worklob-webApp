@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import {
   WorkLobStaking_abi,
   WorkLobStaking_address,
@@ -10,7 +12,19 @@ import { ethers } from "ethers";
 import { Toaster, toast } from "sonner";
 
 const Fundstaking = () => {
-  const { connected, walletAddress, connectWallet } = useWeb3();
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
+  const { connected, walletAddress, connectWallet } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [rewardAmount, setRewardAmount] = useState("");
   const [duration, setDuration] = useState("");
   const [userBalance, setUserBalance] = useState("0");

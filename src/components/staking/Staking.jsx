@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import lobcoin from "../../assets/img/worklob-coin.png";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import {
   WorkLobStaking_abi,
   WorkLobStaking_address,
@@ -11,7 +13,19 @@ import { ethers } from "ethers";
 import { Toaster, toast } from "sonner";
 
 const Staking = () => {
-  const { connectWallet, connected, baseETHBalance, lobBalance } = useWeb3();
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
+  const { connectWallet, connected, baseETHBalance, lobBalance } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+      
   const [rewardRate, setRewardRate] = useState(0);
   const [totalStaked, setTotalStaked] = useState(0);
   const [rewardPeriod, setRewardPeriod] = useState(0);

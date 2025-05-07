@@ -3,13 +3,26 @@ import ETH from "../../assets/img/eth.png";
 import btc from "../../assets/img/btc.png";
 import lobcoin from "../../assets/img/worklob-coin.png";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import Depositmodal from "./Depositmodal";
 import Transfermodal from "./Transfermodal";
 import Swapmodal from "./Swapmodal";
 
 const Wallet = () => {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
   // Initialize state for transaction data
-  const { baseETHBalance, lobBalance } = useWeb3();
+  const { baseETHBalance, lobBalance } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [isDepositmodalOpen, setIsDepositmodalOpen] = useState(false);
   const [isTransfermodalOpen, setIsTransfermodalOpen] = useState(false);
   const [isSwapmodalOpen, setIsSwapmodalOpen] = useState(false);

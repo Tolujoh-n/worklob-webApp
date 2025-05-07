@@ -3,14 +3,28 @@ import Staking from "./Staking";
 import Mystake from "./Mystake";
 import API_URL from "../../config";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 
 function Stake() {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
   const [activeTab, setActiveTab] = useState("overview");
   const token = localStorage.getItem("token");
-  const { connectWallet, connected } = useWeb3();
+  const { connectWallet, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+      
   const [sender, setSender] = useState("");
 
   let userId;

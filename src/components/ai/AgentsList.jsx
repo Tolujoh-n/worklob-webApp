@@ -5,10 +5,23 @@ import "./ai.css";
 import eth from "../../assets/img/eth.png";
 import Aidata from "./Aidata";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 
 const AgentsList = () => {
   const navigate = useNavigate();
-  const { connectWallet, walletAddress, connected } = useWeb3();
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
+  const { connectWallet, walletAddress, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
 
   const handleRedirect = (id) => {
     navigate(`/dashboard/${id}/ai_agents_details`);

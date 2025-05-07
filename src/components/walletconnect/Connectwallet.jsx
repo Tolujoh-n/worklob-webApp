@@ -5,11 +5,23 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { toast, Toaster } from "sonner";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import API_URL from "../../config";
 
 const Connectwallet = () => {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
   const { connectWallet, walletAddress, connected, disconnectWallet } =
-    useWeb3();
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const dropdownRef = useRef(null);

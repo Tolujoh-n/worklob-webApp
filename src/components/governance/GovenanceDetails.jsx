@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import { Pie } from "react-chartjs-2";
 import "chart.js/auto"; // Needed for Pie chart
 import "./gov.css";
@@ -21,8 +23,20 @@ const dummyVoters = [
 ];
 
 const GovenanceDetails = () => {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
+
   const [voting, setVoting] = useState("ended");
-  const { connectWallet, shortenAddress, walletAddress, connected } = useWeb3();
+  const { connectWallet, shortenAddress, walletAddress, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [selectedVote, setSelectedVote] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;

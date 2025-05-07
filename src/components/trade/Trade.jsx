@@ -6,13 +6,26 @@ import Tradetables from "./Tradetables";
 import Orderbook from "./Orderbook";
 import btcimg from "../../assets/img/btc.png";
 import { useWeb3 } from "../../Web3Provider";
+import { useSmartWallet } from "../../SmartWallet";
+import { useWallet } from "../WalletContext";
 import { Toaster, toast } from "sonner";
 import useCryptoPrices from "./UseCryptoPrices"; // import the hook
 import "./trade.css";
 
 const Trade = () => {
+  const { walletType, setWalletType } = useWallet();
+
+  // Call both hooks unconditionally
+  const web3 = useWeb3();
+  const smartWallet = useSmartWallet();
   const [selectedPair, setSelectedPair] = useState("BTC/USDT");
-  const { connectWallet, connected } = useWeb3();
+  const { connectWallet, connected } =
+    (walletType === "metamask"
+      ? web3
+      : walletType === "smartwallet"
+      ? smartWallet
+      : {}) || {};
+
   const [sender, setSender] = useState("");
 
   const pairDetails = useCryptoPrices();

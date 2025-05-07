@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useWeb3 } from "../Web3Provider";
 import { useSmartWallet } from "../SmartWallet";
 import { useWallet } from "./WalletContext";
@@ -8,6 +8,7 @@ import smartwallet from "../assets/img/smart-wallet.png";
 
 const Walletmodal = ({ isOpen, onClose }) => {
   const { walletType, setWalletType } = useWallet();
+  const [sender, setSender] = useState("");
 
   // Call both hooks unconditionally
   const web3 = useWeb3();
@@ -20,6 +21,7 @@ const Walletmodal = ({ isOpen, onClose }) => {
       : walletType === "smartwallet"
       ? smartWallet
       : {}) || {};
+
   const handleSmartwallet = () => {
     setWalletType("smartwallet");
   };
@@ -27,6 +29,27 @@ const Walletmodal = ({ isOpen, onClose }) => {
   const handleWalletConnect = () => {
     setWalletType("metamask");
   };
+
+  // automaticall call meta,ask if metamask is selected
+  useEffect(() => {
+    const getAccount = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          setSender(accounts[0]);
+        } catch (error) {
+          console.error("Error fetching account:", error);
+          toast.error("Failed to fetch wallet address");
+        }
+      }
+    };
+
+    if (walletType === "metamask") {
+      getAccount();
+    }
+  }, [walletType, connected]);
 
   // Automatically connect wallet when walletType changes
   useEffect(() => {

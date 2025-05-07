@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useWeb3 } from "../Web3Provider.js";
 import { Toaster, toast } from "sonner";
 import Walletmodal from "./Walletmodal.jsx";
 
@@ -62,8 +61,6 @@ import "../assets/css/dashboard.css";
 
 const Approutes = () => {
   const [activeLink, setActiveLink] = useState("");
-  const { connectWallet, connected } = useWeb3();
-  const [sender, setSender] = useState("");
   const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
 
   const openWalletmodal = () => setIsWalletmodalOpen(true);
@@ -82,26 +79,6 @@ const Approutes = () => {
   const closeSidebar = () => {
     setSidebarOpen(false); // Explicitly sets the state to false
   };
-
-  // useEffect(() => {
-  //   const getAccount = async () => {
-  //     if (window.ethereum) {
-  //       try {
-  //         const accounts = await window.ethereum.request({
-  //           method: "eth_requestAccounts",
-  //         });
-  //         setSender(accounts[0]);
-  //       } catch (error) {
-  //         console.error("Error fetching account:", error);
-  //         toast.error("Failed to fetch wallet address");
-  //       }
-  //     }
-  //   };
-
-  //   if (connected) {
-  //     getAccount();
-  //   }
-  // }, [connected]);
 
   return (
     <div className={isSidebarOpen ? "toggle-sidebar" : ""}>
