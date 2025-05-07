@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Toaster, toast } from "sonner";
-import Walletmodal from "./Walletmodal.jsx";
 import { useWallet } from "./WalletContext";
 import { useWeb3 } from "../Web3Provider";
 import { useSmartWallet } from "../SmartWallet";
@@ -179,7 +178,6 @@ const Approutes = () => {
               <Route path="/fundstaking" element={<Fundstaking />} />
             </Routes>
           </div>
-          <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} />
         </section>
       </main>
 

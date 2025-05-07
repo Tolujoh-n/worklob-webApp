@@ -187,7 +187,7 @@ export const Web3Provider = ({ children }) => {
       }}
     >
       {children}
-      <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} />
+      {/* <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} /> */}
     </Web3Context.Provider>
   );
 };

@@ -53,10 +53,17 @@ const Walletmodal = ({ isOpen, onClose }) => {
 
   // Automatically connect wallet when walletType changes
   useEffect(() => {
-    if (walletType && connectWallet) {
+    if (walletType && !connected && connectWallet) {
       connectWallet();
     }
-  }, [walletType, connectWallet]);
+  }, [walletType, connected, connectWallet]);
+
+  // Automatically close modal when wallet connects
+  useEffect(() => {
+    if (connected) {
+      onClose();
+    }
+  }, [connected, onClose]);
 
   if (!isOpen) return null;
 
