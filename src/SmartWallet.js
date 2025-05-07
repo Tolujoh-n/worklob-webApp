@@ -116,14 +116,14 @@ export const SmartWalletProvider = ({ children }) => {
   return (
     <SmartWalletContext.Provider
       value={{
-        disconnect,
+        disconnectWallet: disconnect,
         walletAddress: address,
         status,
         connected: isConnected,
         connectWallet: handleConnectClick,
-        shortSmartAddress,
-        smartEthBalance,
-        formattedLobBalance,
+        shortenAddress: shortSmartAddress,
+        baseETHBalance: smartEthBalance,
+        lobBalance: formattedLobBalance,
         ethBalance,
         openWalletmodal,
         closeWalletmodal,
