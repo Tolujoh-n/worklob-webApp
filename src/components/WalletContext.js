@@ -35,15 +35,6 @@ export const WalletProvider = ({ children }) => {
     }
   }, [walletType]);
 
-  // Automatically open modal if walletType is null
-  useEffect(() => {
-    if (!walletType || !connected) {
-      setIsWalletmodalOpen(true);
-    } else {
-      setIsWalletmodalOpen(false);
-    }
-  }, [walletType, connected]);
-
   // Automatically close modal when wallet connects
   useEffect(() => {
     if (connected) {

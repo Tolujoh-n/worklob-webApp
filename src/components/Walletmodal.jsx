@@ -22,12 +22,26 @@ const Walletmodal = ({ isOpen, onClose }) => {
       ? smartWallet
       : {}) || {};
 
-  const handleSmartwallet = () => {
-    setWalletType("smartwallet");
-  };
+  const handleWalletLogin = async (type) => {
+    setWalletType(type); // update context
 
-  const handleWalletConnect = () => {
-    setWalletType("metamask");
+    let provider;
+    if (type === "metamask") {
+      provider = web3;
+    } else if (type === "smartwallet") {
+      provider = smartWallet;
+    }
+
+    if (provider?.connectWallet) {
+      try {
+        await provider.connectWallet();
+      } catch (error) {
+        console.error("Wallet connection error:", error);
+        toast.error("Failed to connect wallet.");
+      }
+    } else {
+      toast.error("Wallet provider not available.");
+    }
   };
 
   // automaticall call meta,ask if metamask is selected
@@ -51,13 +65,6 @@ const Walletmodal = ({ isOpen, onClose }) => {
     }
   }, [walletType, connected]);
 
-  // Automatically connect wallet when walletType changes
-  useEffect(() => {
-    if (walletType && !connected && connectWallet) {
-      connectWallet();
-    }
-  }, [walletType, connected, connectWallet]);
-
   // Automatically close modal when wallet connects
   useEffect(() => {
     if (connected) {
@@ -76,7 +83,7 @@ const Walletmodal = ({ isOpen, onClose }) => {
             id="connbtn"
             type="button"
             style={{ marginBottom: "10px" }}
-            onClick={handleSmartwallet}
+            onClick={() => handleWalletLogin("smartwallet")}
           >
             <img src={smartwallet} alt="Smart Wallet" style={walletIconStyle} />
             Smart Wallet
@@ -85,7 +92,7 @@ const Walletmodal = ({ isOpen, onClose }) => {
             id="connbtn"
             type="button"
             style={{ marginBottom: "20px" }}
-            onClick={handleWalletConnect}
+            onClick={() => handleWalletLogin("metamask")}
           >
             <img src={metamask} alt="Wallet" style={walletIconStyle} />
             Metamask
