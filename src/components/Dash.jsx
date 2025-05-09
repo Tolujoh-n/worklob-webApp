@@ -7,6 +7,7 @@ import { useWeb3 } from "../Web3Provider";
 import { useSmartWallet } from "../SmartWallet";
 import { useWallet } from "./WalletContext";
 import { Toaster, toast } from "sonner";
+import Walletmodal from "./Walletmodal";
 
 const truncateText = (text, wordLimit) => {
   if (!text || text.trim() === "") return "No description available";
@@ -18,7 +19,9 @@ const truncateText = (text, wordLimit) => {
 
 const Dash = () => {
   const { walletType, setWalletType } = useWallet();
-
+  const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
+  const openWalletmodal = () => setIsWalletmodalOpen(true);
+  const closeWalletmodal = () => setIsWalletmodalOpen(false);
   // Call both hooks unconditionally
   const web3 = useWeb3();
   const smartWallet = useSmartWallet();
@@ -150,11 +153,21 @@ const Dash = () => {
           <br />
 
           {connected ? null : (
-            <button className="walletbtn" onClick={connectWallet}>
+            <button
+              className="walletbtn"
+              onClick={() => {
+                if (connected) {
+                  closeWalletmodal();
+                } else {
+                  openWalletmodal();
+                }
+              }}
+            >
               <i className="bi bi-wallet"></i> Connect Wallet
             </button>
           )}
         </div>
+        <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} />
       </div>
     </>
   );

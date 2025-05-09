@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { useWeb3 } from "../../Web3Provider";
 import { useSmartWallet } from "../../SmartWallet";
 import { useWallet } from "../WalletContext";
 import { Toaster, toast } from "sonner";
+import Walletmodal from "../Walletmodal";
 
 const Depositmodal = ({ isOpen, onClose }) => {
   const { walletType, setWalletType } = useWallet();
+  const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
+  const openWalletmodal = () => setIsWalletmodalOpen(true);
+  const closeWalletmodal = () => setIsWalletmodalOpen(false);
 
   // Call both hooks unconditionally
   const web3 = useWeb3();
   const smartWallet = useSmartWallet();
 
-  const { connectWallet, openWalletmodal, walletAddress, connected } =
+  const { connectWallet, walletAddress, connected } =
     (walletType === "metamask"
       ? web3
       : walletType === "smartwallet"
@@ -58,7 +62,16 @@ const Depositmodal = ({ isOpen, onClose }) => {
             </h3>
             <br />
             <div style={{ textAlign: "center" }}>
-              <button onClick={openWalletmodal} className="modall-button">
+              <button
+                onClick={() => {
+                  if (connected) {
+                    closeWalletmodal();
+                  } else {
+                    openWalletmodal();
+                  }
+                }}
+                className="modall-button"
+              >
                 Connect Wallet
               </button>
             </div>
@@ -69,6 +82,7 @@ const Depositmodal = ({ isOpen, onClose }) => {
           Close
         </button>
       </div>
+      <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} />
     </div>
   );
 };

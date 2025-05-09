@@ -5,7 +5,6 @@ import {
   LOB_TOKEN_ABI,
   LOB_TOKEN_ADDRESS,
 } from "./components/Constants";
-import Walletmodal from "./components/Walletmodal";
 
 const Web3Context = createContext();
 
@@ -15,11 +14,6 @@ export const Web3Provider = ({ children }) => {
   const [baseETHBalance, setBaseETHBalance] = useState("0");
   const [lobBalance, setLobBalance] = useState("0");
   const [web3, setWeb3] = useState(null);
-
-  const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
-
-  const openWalletmodal = () => setIsWalletmodalOpen(true);
-  const closeWalletmodal = () => setIsWalletmodalOpen(false);
 
   const saveBalancesToLocalStorage = (ethBalance, lobTokenBalance) => {
     localStorage.setItem(
@@ -182,8 +176,6 @@ export const Web3Provider = ({ children }) => {
         connectWallet,
         disconnectWallet,
         shortenAddress,
-        openWalletmodal,
-        closeWalletmodal,
       }}
     >
       {children}

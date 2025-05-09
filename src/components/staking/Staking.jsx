@@ -3,6 +3,7 @@ import lobcoin from "../../assets/img/worklob-coin.png";
 import { useWeb3 } from "../../Web3Provider";
 import { useSmartWallet } from "../../SmartWallet";
 import { useWallet } from "../WalletContext";
+import Walletmodal from "../Walletmodal";
 import {
   WorkLobStaking_abi,
   WorkLobStaking_address,
@@ -14,6 +15,9 @@ import { Toaster, toast } from "sonner";
 
 const Staking = () => {
   const { walletType, setWalletType } = useWallet();
+  const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
+  const openWalletmodal = () => setIsWalletmodalOpen(true);
+  const closeWalletmodal = () => setIsWalletmodalOpen(false);
 
   // Call both hooks unconditionally
   const web3 = useWeb3();
@@ -25,7 +29,7 @@ const Staking = () => {
       : walletType === "smartwallet"
       ? smartWallet
       : {}) || {};
-      
+
   const [rewardRate, setRewardRate] = useState(0);
   const [totalStaked, setTotalStaked] = useState(0);
   const [rewardPeriod, setRewardPeriod] = useState(0);
@@ -283,7 +287,16 @@ const Staking = () => {
                   Continue to Staking
                 </button>
               ) : (
-                <button className="chat-button" onClick={connectWallet}>
+                <button
+                  className="chat-button"
+                  onClick={() => {
+                    if (connected) {
+                      closeWalletmodal();
+                    } else {
+                      openWalletmodal();
+                    }
+                  }}
+                >
                   Connect Wallet
                 </button>
               )}
@@ -388,6 +401,7 @@ const Staking = () => {
           </div>
         </div>
       </div>
+      <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} />
     </>
   );
 };

@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import Walletmodal from "./Walletmodal";
 import { useWeb3 } from "../Web3Provider";
 import { useSmartWallet } from "../SmartWallet";
 
@@ -7,7 +6,6 @@ const WalletContext = createContext();
 
 export const WalletProvider = ({ children }) => {
   const [walletType, setWalletType] = useState(null);
-  const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
   const web3 = useWeb3();
   const smartWallet = useSmartWallet();
 
@@ -19,8 +17,6 @@ export const WalletProvider = ({ children }) => {
       ? smartWallet
       : {}) || {};
 
-  const openWalletmodal = () => setIsWalletmodalOpen(true);
-  const closeWalletmodal = () => setIsWalletmodalOpen(false);
   // store to local storage
   useEffect(() => {
     const storedWalletType = localStorage.getItem("walletType");
@@ -35,17 +31,9 @@ export const WalletProvider = ({ children }) => {
     }
   }, [walletType]);
 
-  // Automatically close modal when wallet connects
-  useEffect(() => {
-    if (connected) {
-      closeWalletmodal();
-    }
-  }, [connected]);
-
   return (
     <WalletContext.Provider value={{ walletType, setWalletType }}>
       {children}
-      <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} />
     </WalletContext.Provider>
   );
 };

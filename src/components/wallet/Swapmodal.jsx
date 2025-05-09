@@ -3,6 +3,7 @@ import { useWeb3 } from "../../Web3Provider";
 import { useSmartWallet } from "../../SmartWallet";
 import { useWallet } from "../WalletContext";
 import { Toaster, toast } from "sonner";
+import Walletmodal from "../Walletmodal";
 import Web3 from "web3";
 import { LOB_TOKEN_ADDRESS, LOB_TOKEN_ABI } from "../Constants";
 import ETHLogo from "../../assets/img/eth.png";
@@ -10,6 +11,9 @@ import LOBLogo from "../../assets/img/worklob-coin.png";
 
 const Swapmodal = ({ isOpen, onClose }) => {
   const { walletType, setWalletType } = useWallet();
+  const [isWalletmodalOpen, setIsWalletmodalOpen] = useState(false);
+  const openWalletmodal = () => setIsWalletmodalOpen(true);
+  const closeWalletmodal = () => setIsWalletmodalOpen(false);
 
   // Call both hooks unconditionally
   const web3 = useWeb3();
@@ -145,7 +149,16 @@ const Swapmodal = ({ isOpen, onClose }) => {
           <>
             <h3 style={{ textAlign: "center" }}>Connect wallet to swap</h3>
             <div style={{ textAlign: "center" }}>
-              <button onClick={connectWallet} className="modall-button">
+              <button
+                onClick={() => {
+                  if (connected) {
+                    closeWalletmodal();
+                  } else {
+                    openWalletmodal();
+                  }
+                }}
+                className="modall-button"
+              >
                 Connect Wallet
               </button>
             </div>
@@ -156,6 +169,7 @@ const Swapmodal = ({ isOpen, onClose }) => {
           </>
         )}
       </div>
+      <Walletmodal isOpen={isWalletmodalOpen} onClose={closeWalletmodal} />
     </div>
   );
 };
