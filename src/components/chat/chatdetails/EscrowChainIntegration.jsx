@@ -4,8 +4,6 @@ import { ethers } from "ethers";
 import { JOB_CONTRACT_ADDRESS, JOB_ABI } from "../../Constants";
 import API_URL from "../../../config";
 
-
-
 async function getAmount(jobId) {
   console.log("Fetching amount for jobId:", jobId);
 
@@ -52,15 +50,13 @@ async function getAmount(jobId) {
   }
 }
 
-// Fetch real-time ETH price (USD)
+// Fetch ETH price from your backend (not CoinGecko)
 async function getEthPriceUSD() {
   try {
-    const response = await axios.get(
-      "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
-    );
-    return response.data.ethereum.usd;
+    const response = await axios.get(`${API_URL}/api/v1/price/eth`);
+    return response.data.usd;
   } catch (error) {
-    console.error("Error fetching ETH price:", error);
+    console.error("Failed to get ETH price from backend:", error);
     return null;
   }
 }
