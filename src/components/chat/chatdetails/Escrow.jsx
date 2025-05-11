@@ -6,7 +6,8 @@ import { useWallet } from "../../WalletContext";
 import { toast } from "sonner";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { deposit, complete, confirm } from "./EscrowChainIntegration";
+import * as MetamaskChain from "./EscrowChainIntegration";
+import * as SmartWalletChain from "./SmEscrowChainIntegration";
 import API_URL from "../../../config";
 
 const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
@@ -114,10 +115,12 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
       await connectWallet();
     }
 
+    const chainActions =
+      walletType === "smartwallet" ? SmartWalletChain : MetamaskChain;
+
     try {
-      // Trigger the appropriate function (deposit, complete, or confirm) based on index
       if (index === 1) {
-        await deposit(
+        await chainActions.deposit(
           jobId,
           chat.customerId,
           chat.talentId,
@@ -125,7 +128,7 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
           chatId
         );
       } else if (index === 3) {
-        await complete(
+        await chainActions.complete(
           jobId,
           chat.customerId,
           chat.talentId,
@@ -133,7 +136,7 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
           chatId
         );
       } else if (index === 4) {
-        await confirm(
+        await chainActions.confirm(
           jobId,
           chat.customerId,
           chat.talentId,
@@ -142,7 +145,6 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
         );
       }
 
-      // Now update the status
       const response = await axios.put(
         `${API_URL}/api/v1/chat/chatdetails/${jobId}/chat/${chatId}`,
         {
@@ -152,7 +154,6 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
           userRole,
         }
       );
-      console.log("Updated chat:", response.data);
       toast.success("Status updated successfully!");
     } catch (error) {
       console.error("Error updating status:", error.message);
