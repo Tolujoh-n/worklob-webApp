@@ -134,8 +134,7 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
           chat.customerId,
           chat.talentId,
           walletAddress,
-          chatId,
-          SmwalletAddress
+          chatId
         );
       } else if (index === 3) {
         await chainActions.complete(

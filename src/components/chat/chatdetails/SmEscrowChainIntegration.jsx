@@ -1,31 +1,13 @@
 import {
+  readContract,
   writeContract,
   waitForTransaction,
   getWalletClient,
 } from "@wagmi/core";
 import axios from "axios";
-import { parseEther } from "viem";
 import { JOB_CONTRACT_ADDRESS, JOB_ABI } from "../../Constants";
 import API_URL from "../../../config";
-import { http, createConfig } from "wagmi";
-import { baseSepolia } from "wagmi/chains";
-import { coinbaseWallet } from "wagmi/connectors";
-import { connect, getAccount } from "@wagmi/core";
-
-export const cbWalletConnector = coinbaseWallet({
-  appName: "Wagmi Smart Wallet",
-  preference: "smartWalletOnly",
-});
-
-export const config = createConfig({
-  chains: [baseSepolia],
-  multiInjectedProviderDiscovery: false,
-  connectors: [cbWalletConnector],
-  ssr: true,
-  transports: {
-    [baseSepolia.id]: http(),
-  },
-});
+import { parseEther } from "viem";
 
 /**
  * Fetches the estimated job budget in USD.
@@ -73,30 +55,31 @@ export async function deposit(
   customerId,
   talentId,
   customerWallet,
-  chatId,
-  account
+  chatId
 ) {
+  console.log("Deposit parameters:", {
+    jobId,
+    customerId,
+    talentId,
+    customerWallet,
+    chatId,
+  });
+
   const usdAmount = await getAmount(jobId);
   const ethPrice = await getEthPriceUSD();
-  if (!usdAmount || !ethPrice) return;
+  if (!usdAmount || !ethPrice) {
+    console.error("Missing USD amount or ETH price");
+    return;
+  }
 
   const ethAmount = (usdAmount / ethPrice).toFixed(6);
-  const parsedValue = parseEther(ethAmount.toString());
+  const parsedValue = parseEther(ethAmount);
 
   try {
-    const accountData = getAccount();
-
-    if (!accountData?.address) {
-      await connect({ connector: cbWalletConnector });
-    }
-
-    const walletClient = await getWalletClient(config, {
-      account,
-      chainId: baseSepolia.id,
-    });
-
+    const walletClient = await getWalletClient();
     if (!walletClient) {
-      throw new Error("No wallet client found.");
+      console.error("Wallet client not found. Ensure wallet is connected.");
+      return;
     }
 
     const { hash } = await writeContract({
@@ -112,7 +95,7 @@ export async function deposit(
         chatId,
       ],
       value: parsedValue,
-      walletClient,
+      walletClient, // ensure correct signer is used (for smart wallet too)
     });
 
     await waitForTransaction({ hash });
@@ -122,22 +105,22 @@ export async function deposit(
   }
 }
 
-// Same change for complete()
+/**
+ * Handles the complete action on the smart contract.
+ */
 export async function complete(
   jobId,
   customerId,
   talentId,
   talentWallet,
-  chatId,
-  account
+  chatId
 ) {
   try {
-    const walletClient = await getWalletClient(config, {
-      account,
-      chainId: baseSepolia.id,
-    });
-
-    if (!walletClient) throw new Error("No wallet client");
+    const walletClient = await getWalletClient();
+    if (!walletClient) {
+      console.error("Wallet client not found. Ensure wallet is connected.");
+      return;
+    }
 
     const { hash } = await writeContract({
       address: JOB_CONTRACT_ADDRESS,
@@ -154,22 +137,22 @@ export async function complete(
   }
 }
 
-// Same change for confirm()
+/**
+ * Handles the confirm action on the smart contract.
+ */
 export async function confirm(
   jobId,
   customerId,
   talentId,
   customerWallet,
-  chatId,
-  account
+  chatId
 ) {
   try {
-    const walletClient = await getWalletClient(config, {
-      account,
-      chainId: baseSepolia.id,
-    });
-
-    if (!walletClient) throw new Error("No wallet client");
+    const walletClient = await getWalletClient();
+    if (!walletClient) {
+      console.error("Wallet client not found. Ensure wallet is connected.");
+      return;
+    }
 
     const { hash } = await writeContract({
       address: JOB_CONTRACT_ADDRESS,
