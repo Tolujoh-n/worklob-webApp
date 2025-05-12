@@ -9,9 +9,18 @@ import { jwtDecode } from "jwt-decode";
 import * as MetamaskChain from "./EscrowChainIntegration";
 import * as SmartWalletChain from "./SmEscrowChainIntegration";
 import API_URL from "../../../config";
+import { useAccount } from "wagmi";
 
 const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
   const { walletType, setWalletType } = useWallet();
+  const { address: SmwalletAddress, isConnected } = useAccount();
+
+  console.log(
+    "Smart Wallet Address:",
+    SmwalletAddress,
+    "Connected:",
+    isConnected
+  );
 
   // Call both hooks unconditionally
   const web3 = useWeb3();
@@ -125,7 +134,8 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
           chat.customerId,
           chat.talentId,
           walletAddress,
-          chatId
+          chatId,
+          SmwalletAddress
         );
       } else if (index === 3) {
         await chainActions.complete(
