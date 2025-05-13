@@ -69,20 +69,33 @@ function AgentsDetails() {
   // To fetch subscription status on mount
   useEffect(() => {
     const fetchStatus = async () => {
-      if (!walletAddress || !aiId) return;
+      if (!walletAddress || !aiId || !connected) return;
 
-      const status = await chainActions.getSubscriptionStatus(
-        walletAddress,
-        aiId
-      );
-      console.log("Subscription status:", status);
+      try {
+        const status = await chainActions.getSubscriptionStatus(
+          walletAddress,
+          aiId
+        );
+        console.log("Subscription status:", status);
 
-      setStartDate(status.startDate);
-      setEndDate(status.endDate);
+        setStartDate(status.startDate);
+        setEndDate(status.endDate);
+      } catch (error) {
+        console.error("Failed to fetch subscription:", error);
+      }
     };
 
     fetchStatus();
-  }, [walletAddress, aiId]);
+  }, [walletAddress, aiId, connected]);
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      console.log("Fetched subscription:", {
+        start: startDate.toISOString(),
+        end: endDate.toISOString(),
+      });
+    }
+  }, [startDate, endDate]);
 
   useEffect(() => {
     if (isSubscribed) {

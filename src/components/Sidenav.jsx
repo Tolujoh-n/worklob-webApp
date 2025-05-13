@@ -75,10 +75,10 @@ const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
   const userlist = [
     { id: 1, path: "wallet", name: "Wallet", icon: "bi-wallet" },
     { id: 2, path: "staking", name: "Staking", icon: "bi-coin" },
-    { id: 3, path: "loan", name: "Loan", icon: "bi-cash-coin" },
-    { id: 4, path: "governance", name: "Governance", icon: "bi-bank" },
-    { id: 5, path: "trade", name: "Trade", icon: "bi-arrow-left-right" },
-    { id: 6, path: "referrals", name: "Referrals", icon: "bi-people" },
+    { id: 3, path: "loan", name: "Loan (soon)", icon: "bi-cash-coin" },
+    { id: 4, path: "governance", name: "Governance(soon)", icon: "bi-bank" },
+    { id: 5, path: "trade", name: "Trade (soon)", icon: "bi-arrow-left-right" },
+    { id: 6, path: "referrals", name: "Referrals(soon)", icon: "bi-people" },
     { id: 7, path: "settings", name: "Settings", icon: "bi-gear" },
   ];
 

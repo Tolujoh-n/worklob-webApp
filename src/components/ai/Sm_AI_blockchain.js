@@ -88,8 +88,14 @@ export function useSmAIActions() {
   }
 
   // Get subscription status
-  async function getSubscriptionStatus(user, aiId) {
+  // Get subscription status
+  async function getSubscriptionStatus(_, aiId) {
     try {
+      if (!account.chain) {
+        console.warn("Chain not ready");
+        return { isActive: false, startDate: null, endDate: null };
+      }
+
       const provider = createPublicClient({
         chain: account.chain,
         transport: custom(window.ethereum),
@@ -99,12 +105,12 @@ export function useSmAIActions() {
         address: WorkLob_ai_address,
         abi: WorkLob_ai_abi,
         functionName: "getSubscriptionStatus",
-        args: [user, aiId],
+        args: [account.address, aiId], // ✅ Use smart wallet address
       });
 
       return {
         isActive,
-        startDate: new Date(Number(start) * 1000), // Convert BigInt to Number
+        startDate: new Date(Number(start) * 1000),
         endDate: new Date(Number(end) * 1000),
       };
     } catch (error) {
