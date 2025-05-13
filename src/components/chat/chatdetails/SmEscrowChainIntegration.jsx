@@ -20,7 +20,7 @@ export function useSmEscrowActions() {
     if (caps?.PaymasterService?.supported) {
       return {
         PaymasterService: {
-          url: process.env.NEXT_PUBLIC_PAYMASTER_PROXY_SERVER_URL,
+          url: process.env.REACT_PUBLIC_PAYMASTER_PROXY_SERVER_URL,
         },
       };
     }
