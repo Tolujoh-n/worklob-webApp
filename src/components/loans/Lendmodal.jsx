@@ -42,7 +42,7 @@ const Lendmodal = ({ onClose }) => {
               <h5 className="c" style={{ color: "whitesmoke" }}>
                 <b>The penguin </b>
               </h5>
-              <p>Total in Pool: 12 ETH</p>
+              <p>Total in Pool: 12 USDC</p>
             </div>
           </div>
           <br />
@@ -109,7 +109,7 @@ const Lendmodal = ({ onClose }) => {
                 ></i>{" "}
               </span>
               If they don't repay on time, you get the NFT that they used as
-              collateral instead of the $ETH you lended out.
+              collateral instead of the $USDC you lended out.
             </p>
           </div>
 
@@ -154,7 +154,7 @@ const Lendmodal = ({ onClose }) => {
                   <input
                     type="number"
                     className="form-control"
-                    placeholder="0.00 ETH"
+                    placeholder="0.00 USDC"
                     value={lend_amount}
                     onChange={(e) => setLend_amount(e.target.value)}
                     required
@@ -170,7 +170,7 @@ const Lendmodal = ({ onClose }) => {
                     style={{ background: "transparent", color: "whitesmoke" }}
                     type="number"
                     className="form-control"
-                    placeholder="0.00 ETH"
+                    placeholder="0.00 USDC"
                     value={interest_amount}
                     onChange={(e) => setInterest_amount(e.target.value)}
                     disabled
@@ -180,7 +180,7 @@ const Lendmodal = ({ onClose }) => {
               </div>
             </div>
             <p>
-              The Lender will repay <span className="loan-tag">0.00 ETH</span>.
+              The Lender will repay <span className="loan-tag">0.00 USDC</span>.
               Else you can claim the{" "}
               <span className="loan-tag">0.00 Penguin</span> collateral
             </p>

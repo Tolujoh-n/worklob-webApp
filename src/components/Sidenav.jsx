@@ -2,7 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
+const Sidenav = ({ isSidebarOpen, activeLink, setActive, toggleSidebar }) => {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -12,12 +12,10 @@ const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
   if (token) {
     const decodedToken = jwtDecode(token);
     userId = decodedToken.userId;
-    // console.log(userId);
   }
 
   if (user && user.role) {
     userRole = user.role;
-    // console.log(userRole);
   }
 
   const gigcategory = [
@@ -90,6 +88,13 @@ const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
 
   const isActive = (path) => location.pathname === path;
 
+  // Handle closing the sidebar when a nav item is clicked
+  const handleLinkClick = () => {
+    if (isSidebarOpen) {
+      toggleSidebar();
+    }
+  };
+
   return (
     <aside
       id="sidebar"
@@ -98,7 +103,11 @@ const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
       {userRole === "Talent" && (
         <ul className="sidebar-nav" id="sidebar-nav">
           <li className="nav-item">
-            <Link className="nav-link gap-1 collapsed" to="/dashboard">
+            <Link
+              className="nav-link gap-1 collapsed"
+              to="/dashboard"
+              onClick={handleLinkClick}
+            >
               <i className="bi bi-house"></i>
               <span>Dashboard</span>
             </Link>
@@ -112,6 +121,7 @@ const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
                     : ""
                 }`}
                 to={`/dashboard/${gignav.path.toLowerCase()}`}
+                onClick={handleLinkClick}
               >
                 <i className={`bi ${gignav.icon}`}></i>
                 <span>{gignav.name}</span>
@@ -127,6 +137,7 @@ const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
             <Link
               className="nav-link gap-1 collapsed"
               to="/dashboard/customerdash"
+              onClick={handleLinkClick}
             >
               <i className="bi bi-house"></i>
               <span>Dashboard</span>
@@ -141,6 +152,7 @@ const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
                     : ""
                 }`}
                 to={`/dashboard/${customer.path.toLowerCase()}`}
+                onClick={handleLinkClick}
               >
                 <i className={`bi ${customer.icon}`}></i>
                 <span>{customer.name}</span>
@@ -161,7 +173,10 @@ const Sidenav = ({ isSidebarOpen, activeLink, setActive }) => {
                   ? "active"
                   : ""
               }`}
-              onClick={() => setActive(`/dashboard/${user.name.toLowerCase()}`)}
+              onClick={() => {
+                setActive(`/dashboard/${user.name.toLowerCase()}`);
+                handleLinkClick(); // Close the sidebar when a user link is clicked
+              }}
               to={`/dashboard/${user.path.toLowerCase()}`}
             >
               <i className={`bi ${user.icon}`}></i>

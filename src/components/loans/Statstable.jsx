@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import coin from "./loanasset/eth.png";
+import coin from "./loanasset/usdc.png";
 import Penguins from "./loanasset/pengu.jpg";
 import Onchain from "./loanasset/onchain-gia.jpg";
 import Baseg from "./loanasset/base-god.gif";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import coin from "./loanasset/eth.png";
+import coin from "./loanasset/usdc.png";
 import Penguins from "./loanasset/pengu.jpg";
 import Onchain from "./loanasset/onchain-gia.jpg";
 import Baseg from "./loanasset/base-god.gif";
@@ -83,7 +83,7 @@ const tableData = [
     bestoffer: 14,
     interest: 0.6,
     interestrate: "3.59% interest",
-    apy: 65,
+    apy: 50,
     duration: 8,
     offers: [
       { bestoffer: 13.5, interest: 0.55, duration: 6 },
@@ -98,7 +98,7 @@ const tableData = [
     bestoffer: 14,
     interest: 0.6,
     interestrate: "3.59% interest",
-    apy: 65,
+    apy: 70,
     duration: 8,
     offers: [
       { bestoffer: 13.5, interest: 0.55, duration: 6 },

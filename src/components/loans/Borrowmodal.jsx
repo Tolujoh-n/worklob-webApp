@@ -39,7 +39,7 @@ const Borrowmodal = ({ onClose }) => {
               <h5 className="c" style={{ color: "whitesmoke" }}>
                 <b>The penguin </b>
               </h5>
-              <p>Total Pool: 5 ETH</p>
+              <p>Total Pool: 5 USDC</p>
             </div>
           </div>
           <br />
@@ -102,7 +102,7 @@ const Borrowmodal = ({ onClose }) => {
                   className="bi bi-info"
                 ></i>{" "}
               </span>
-              If you can't repay the $ETH within the loan term period, you'll
+              If you can't repay the $USDC within the loan term period, you'll
               lose ownership of the NFT.
             </p>
           </div>
@@ -117,7 +117,7 @@ const Borrowmodal = ({ onClose }) => {
                   <input
                     type="number"
                     className="form-control"
-                    placeholder="0.00 ETH"
+                    placeholder="0.00 USDC"
                     min="0"
                     value={field1}
                     onChange={(e) => setField1(e.target.value)}
@@ -134,7 +134,7 @@ const Borrowmodal = ({ onClose }) => {
                     style={{ background: "transparent", color: "whitesmoke" }}
                     type="number"
                     className="form-control"
-                    placeholder="0.00 ETH"
+                    placeholder="0.00 USDC"
                     min="0"
                     value={field1}
                     onChange={(e) => setField1(e.target.value)}

@@ -124,6 +124,7 @@ const Approutes = () => {
         isSidebarOpen={isSidebarOpen}
         activeLink={activeLink}
         setActive={setActiveLink}
+        toggleSidebar={toggleSidebar}
       />
       <main id="main" className="main">
         <section className="section dashboard">

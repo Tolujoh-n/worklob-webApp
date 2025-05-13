@@ -1,5 +1,5 @@
 import React from "react";
-import coin from "./loanasset/eth.png";
+import coin from "./loanasset/usdc.png";
 import Loantable from "./Loantable";
 
 const Loanlist = () => {
