@@ -7,12 +7,13 @@ import { toast } from "sonner";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import * as MetamaskChain from "./EscrowChainIntegration";
-import * as SmartWalletChain from "./SmEscrowChainIntegration";
+import { useSmEscrowActions } from "./SmEscrowChainIntegration";
 import API_URL from "../../../config";
 import { useAccount } from "wagmi";
 
 const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
   const { walletType, setWalletType } = useWallet();
+  const smartWalletActions = useSmEscrowActions();
   const { address: SmwalletAddress, isConnected } = useAccount();
 
   console.log(
@@ -112,10 +113,10 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
 
     const updatedStates = [...buttonStates];
     if (!updatedStates[index] && (index === 0 || updatedStates[index - 1])) {
+      await handleStatusUpdate(status, index);
+
       updatedStates[index] = true;
       setButtonStates(updatedStates);
-
-      await handleStatusUpdate(status, index);
     }
   };
 
@@ -125,7 +126,7 @@ const Escrow = ({ jobId, chatId, currentStatus, trackWalletAddress }) => {
     }
 
     const chainActions =
-      walletType === "smartwallet" ? SmartWalletChain : MetamaskChain;
+      walletType === "smartwallet" ? smartWalletActions : MetamaskChain;
 
     try {
       if (index === 1) {
