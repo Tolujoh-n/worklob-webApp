@@ -8,11 +8,12 @@ import MarkdownMessage from "./MarkdownMessage";
 import { useWeb3 } from "../../Web3Provider";
 import { useSmartWallet } from "../../SmartWallet";
 import { useWallet } from "../WalletContext";
-import {
-  payForSingleUse,
-  subscribeToAI,
-  getSubscriptionStatus,
-} from "./AI_blockchain";
+
+import * as MetamaskChain from "./AI_blockchain";
+// import * as SmartWalletChain from "./Sm_AI_blockchain";
+
+// import { useMetaAIActions } from "./AI_blockchain";
+import { useSmAIActions } from "./Sm_AI_blockchain";
 
 import "./ai.css";
 
@@ -24,7 +25,11 @@ function AgentsDetails() {
   const singleFee = agent?.singleFee;
   const { walletType, setWalletType } = useWallet();
 
-  // Call both hooks unconditionally
+  const smartWalletChain = useSmAIActions();
+
+  const chainActions =
+    walletType === "smartwallet" ? smartWalletChain : MetamaskChain;
+
   const web3 = useWeb3();
   const smartWallet = useSmartWallet();
   const { connectWallet, walletAddress, connected } =
@@ -66,7 +71,10 @@ function AgentsDetails() {
     const fetchStatus = async () => {
       if (!walletAddress || !aiId) return;
 
-      const status = await getSubscriptionStatus(walletAddress, aiId);
+      const status = await chainActions.getSubscriptionStatus(
+        walletAddress,
+        aiId
+      );
       console.log("Subscription status:", status);
 
       setStartDate(status.startDate);
@@ -140,7 +148,7 @@ function AgentsDetails() {
       subscriptionFee,
     });
     try {
-      const result = await subscribeToAI(
+      const result = await chainActions.subscribeToAI(
         agent.id,
         agent.provider_address,
         now,
@@ -173,7 +181,11 @@ function AgentsDetails() {
     });
 
     try {
-      const result = await payForSingleUse(aiId, providerAddress, singleFee);
+      const result = await chainActions.payForSingleUse(
+        aiId,
+        providerAddress,
+        singleFee
+      );
       if (result) {
         toast.success("Single use payment successful");
         console.log("Single use payment successful");
