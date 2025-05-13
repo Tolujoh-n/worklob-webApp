@@ -185,37 +185,37 @@ function AgentsDetails() {
   const handleProcessClick = () => setStep(2);
 
   const handleConfirmPayment = async () => {
-    // Pay for single use
-    console.log("Subscribe function triggered with data:");
-    console.log({
+    console.log("Payment triggered:", {
       aiId,
       providerAddress,
       singleFee,
     });
 
     try {
+      toast.loading("Waiting for transaction confirmation...", { id: "txn" });
+
       const result = await chainActions.payForSingleUse(
         aiId,
         providerAddress,
         singleFee
       );
-      if (result) {
-        toast.success("Single use payment successful");
-        console.log("Single use payment successful");
-      } else {
-        toast.error("Payment failed or rejected");
-      }
+
+      toast.dismiss("txn");
 
       if (result) {
-        // Proceed with AI usage
+        toast.success("Single use payment successful");
         setStep(3);
         setLoading(true);
         if (aiRef.current) {
           aiRef.current.triggerAI();
         }
+      } else {
+        toast.error("Payment failed or rejected");
       }
     } catch (error) {
+      toast.dismiss("txn");
       toast.error("Payment failed");
+      console.error("handleConfirmPayment error:", error);
     }
   };
 
