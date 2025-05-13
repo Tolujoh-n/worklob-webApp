@@ -147,7 +147,7 @@ const Aidata = [
     name: "NFT Artwork Generator",
     description: "Create distinctive NFT visuals from concept prompts.",
     basePrice: 0.000025,
-    singleFee: 0.01,
+    singleFee: 0.00001,
     author: "LOB Task AI",
     provider_address: "0x1502B75f0eF25Fa1Fe5b79594da566047859645e",
     type: "image",
