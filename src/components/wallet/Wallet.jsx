@@ -104,7 +104,7 @@ const Wallet = () => {
                   <td>
                     <img src={ETH} alt="ETH" className="token-logo" /> ETH
                   </td>
-                  <td>{parseFloat(baseETHBalance).toFixed(2)} ETH</td>
+                  <td>{parseFloat(baseETHBalance).toFixed(4)} ETH</td>
                   <td>0.00 USDT</td>
                 </tr>
                 <tr>

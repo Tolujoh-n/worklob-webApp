@@ -50,7 +50,7 @@ const Sidebar = () => {
                 <img id="balance" src={eth} alt="" />
               </div>
               <div className="ps-3">
-                <h6>{parseFloat(baseETHBalance).toFixed(2)} ETH</h6>
+                <h6>{parseFloat(baseETHBalance).toFixed(4)} ETH</h6>
               </div>
             </div>
             <hr />
