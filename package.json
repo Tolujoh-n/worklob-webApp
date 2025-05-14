@@ -25,6 +25,8 @@
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@vercel/kv": "^3.0.0",
+    "@zoralabs/coins-sdk": "^0.1.1",
+    "@zoralabs/protocol-sdk": "^0.13.6",
     "apexcharts": "^4.5.0",
     "axios": "^1.7.7",
     "chart.js": "^4.4.8",

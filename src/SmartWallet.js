@@ -41,7 +41,6 @@ export const SmartWalletProvider = ({ children }) => {
   const [lobTokenBalance, setLobTokenBalance] = useState(0n);
 
   const smartEthBalance = formatEther(ethBalance); // formatted string
-  const formattedLobBalance = formatUnits(lobTokenBalance, 18); // assuming 18 decimals
 
   const fetchBalances = useCallback(async () => {
     if (!address || !publicClient) return;
@@ -118,7 +117,7 @@ export const SmartWalletProvider = ({ children }) => {
         connectWallet: handleConnectClick,
         shortenAddress: shortSmartAddress,
         baseETHBalance: smartEthBalance,
-        lobBalance: formattedLobBalance,
+        lobBalance: lobTokenBalance,
         ethBalance,
       }}
     >
