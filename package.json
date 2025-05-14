@@ -17,6 +17,7 @@
     "@stacks/network": "^7.0.2",
     "@stacks/transactions": "^7.0.2",
     "@stacks/wallet-sdk": "^7.0.2",
+    "@tanstack/react-query": "^5.76.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

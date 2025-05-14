@@ -129,6 +129,9 @@ const Connectwallet = () => {
         disconnectWallet();
       }
 
+      // Unset wallet type
+      setWalletType(null);
+
       // Remove user data from local storage
       localStorage.removeItem("token");
       localStorage.removeItem("user");
