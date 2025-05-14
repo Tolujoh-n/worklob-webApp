@@ -53,6 +53,26 @@ const Transfermodal = ({ isOpen, onClose }) => {
     return {};
   }, [availableCapabilities, account.chainId]);
 
+  useEffect(() => {
+    const getAccount = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          setSender(accounts[0]);
+        } catch (error) {
+          console.error("Error fetching account:", error);
+          toast.error("Failed to fetch wallet address");
+        }
+      }
+    };
+
+    if (connected && walletType === "metamask") {
+      getAccount();
+    }
+  }, [connected]);
+
   const handleSmTransfer = async () => {
     if (!recipient || !amount) {
       toast.error("Please enter recipient address and amount.");

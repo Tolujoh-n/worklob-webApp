@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ETH from "../../assets/img/eth.png";
-import btc from "../../assets/img/btc.png";
+import usdc from "../../assets/img/usdc.png";
 import lobcoin from "../../assets/img/worklob-coin.png";
 import { useWeb3 } from "../../Web3Provider";
 import { useSmartWallet } from "../../SmartWallet";
@@ -8,9 +8,12 @@ import { useWallet } from "../WalletContext";
 import Depositmodal from "./Depositmodal";
 import Transfermodal from "./Transfermodal";
 import Swapmodal from "./Swapmodal";
+import API_URL from "../../config";
+import axios from "axios";
 
 const Wallet = () => {
   const { walletType, setWalletType } = useWallet();
+  const [ethPrice, setEthPrice] = useState(null);
 
   // Call both hooks unconditionally
   const web3 = useWeb3();
@@ -35,6 +38,31 @@ const Wallet = () => {
 
   const openSwapmodal = () => setIsSwapmodalOpen(true);
   const closeSwapmodal = () => setIsSwapmodalOpen(false);
+
+  const ethBalance = parseFloat(baseETHBalance || 0);
+  const ethInUSDT = ethPrice
+    ? (ethBalance * ethPrice).toFixed(2)
+    : "Loading...";
+
+  async function getEthPriceUSD() {
+    try {
+      const res = await axios.get(`${API_URL}/api/v1/price/eth`);
+      return res.data.usd;
+    } catch (e) {
+      console.error("getEthPriceUSD error:", e);
+      return null;
+    }
+  }
+  useEffect(() => {
+    async function fetchEthPrice() {
+      const price = await getEthPriceUSD();
+      if (price) {
+        setEthPrice(price);
+      }
+    }
+
+    fetchEthPrice();
+  }, []);
 
   const [transactions, setTransactions] = useState([
     {
@@ -105,13 +133,13 @@ const Wallet = () => {
                     <img src={ETH} alt="ETH" className="token-logo" /> ETH
                   </td>
                   <td>{parseFloat(baseETHBalance).toFixed(4)} ETH</td>
-                  <td>0.00 USDT</td>
+                  <td>{ethInUSDT} USDT</td>
                 </tr>
                 <tr>
                   <td>
-                    <img src={btc} alt="LOB" className="token-logo" /> BTC
+                    <img src={usdc} alt="LOB" className="token-logo" /> USDC
                   </td>
-                  <td>0 BTC</td>
+                  <td>0 USDC</td>
                   <td>0.00 USDT</td>
                 </tr>
                 <tr>
