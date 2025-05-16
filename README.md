@@ -251,6 +251,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Landing Page: https://worklob.netlify.app/
 - Video Demo:https://youtu.be/tPJVEbSilow
 - WebAPP (Testnet): https://worklobapp.netlify.app/
+- Follow on X: https://x.com/worklob_global?s=21
 
 ## Acknowledgments
 
