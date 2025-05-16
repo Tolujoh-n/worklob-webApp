@@ -252,6 +252,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Video Demo:https://youtu.be/tPJVEbSilow
 - WebAPP (Testnet): https://worklobapp.netlify.app/
 - Follow on X: https://x.com/worklob_global?s=21
+- Discord: https://discord.gg/CBQmQgeYkp
 
 ## Acknowledgments
 
